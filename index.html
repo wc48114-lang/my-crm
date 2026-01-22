@@ -4,114 +4,110 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="color-scheme" content="light">
-    <title>私享客 CRM V6.0 - 稳定质感版</title>
+    <title>私享客 CRM V6.2 - 强力重连版</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --primary: #6366f1; --bg: #f3f4f6; }
+        /* 2. 强力锁定浅色背景，抵抗国产浏览器强行反色 */
+        :root { 
+            --primary: #6366f1; 
+            --bg: #f3f4f6 !important; 
+            --card-bg: #ffffff !important;
+            --text-main: #1e293b !important;
+            --text-sub: #64748b !important;
+        }
         
-        /* 强力锁定浅色背景，抵抗手机系统的强制黑色 */
         html, body { 
-            background-color: #f3f4f6 !important; 
-            color: #1e293b !important;
-            margin: 0; padding-bottom: 120px;
+            background-color: var(--bg) !important; 
+            color: var(--text-main) !important;
+            margin: 0; padding: 0; padding-bottom: 120px;
             font-family: -apple-system, system-ui, sans-serif;
             min-height: 100vh;
         }
 
         .stats-header { 
-            background: linear-gradient(135deg, #4f46e5, #818cf8); 
-            padding: 40px 25px 50px; border-radius: 0 0 40px 40px; 
-            color: white; box-shadow: 0 10px 30px rgba(79, 70, 229, 0.15);
+            background: linear-gradient(135deg, #4f46e5, #818cf8) !important; 
+            padding: 40px 25px 60px; border-radius: 0 0 40px 40px; 
+            color: white !important; box-shadow: 0 10px 30px rgba(79, 70, 229, 0.2);
         }
 
         #searchBox { 
-            width: calc(100% - 40px); margin: -25px 20px 20px; 
+            width: calc(100% - 40px); margin: -30px 20px 20px; 
             padding: 18px 25px; border: none; border-radius: 22px; 
             background: white !important; color: #1e293b !important;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.08); font-size: 16px; outline: none; box-sizing: border-box;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); font-size: 16px; outline: none; box-sizing: border-box;
         }
 
         .card { 
-            background: white !important; border-radius: 28px; padding: 22px; 
+            background: var(--card-bg) !important; border-radius: 28px; padding: 22px; 
             margin: 0 15px 18px; position: relative; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #ffffff;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.05); border: 1px solid #ffffff;
         }
 
         .name { font-size: 22px; font-weight: 800; color: #0f172a !important; }
-        .stars { color: #f59e0b; font-size: 14px; float: right; }
-        .tag { font-size: 12px; padding: 5px 12px; border-radius: 10px; background: #f1f5f9; color: #64748b; margin-right: 5px; display: inline-block; margin-top: 10px; }
+        .tag { font-size: 12px; padding: 5px 12px; border-radius: 10px; background: #f1f5f9 !important; color: var(--text-sub) !important; margin-right: 5px; display: inline-block; margin-top: 10px; }
 
         .demand-content { 
-            background: #fffbeb !important; padding: 15px; border-radius: 18px; 
+            background: #fffbeb !important; padding: 18px; border-radius: 20px; 
             font-size: 15px; color: #92400e !important; line-height: 1.6;
-            border-left: 5px solid #f59e0b; margin-top: 15px;
+            border-left: 6px solid #f59e0b; margin-top: 15px;
         }
 
-        .action-bar { display: flex; gap: 12px; margin-top: 18px; }
-        .btn { flex: 1; padding: 14px; border-radius: 16px; border: none; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
-        .btn-call { background: var(--primary); color: white; }
-        .btn-wx { background: #f1f5f9; color: #475569; }
-
-        /* 底部导航 */
-        .nav-bar { position: fixed; bottom: 30px; left: 20px; right: 20px; height: 75px; background: #1e293b; border-radius: 38px; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
-        .add-circle { width: 65px; height: 65px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; margin-top: -45px; border: 6px solid #f3f4f6; }
-
-        /* 弹窗及输入框强制白色 */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: flex-end; backdrop-filter: blur(10px); }
+        /* 3. 弹窗样式修正 */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: flex-end; backdrop-filter: blur(8px); }
         .modal-content { background: white !important; width: 100%; border-radius: 40px 40px 0 0; padding: 30px; box-sizing: border-box; max-height: 90vh; overflow-y: auto; }
-        input, select, textarea { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid #e2e8f0; background: #f8fafc !important; color: #1e293b !important; box-sizing: border-box; margin-top: 5px; }
+        label { color: var(--text-sub) !important; font-size: 12px; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 16px; border-radius: 16px; border: 1px solid #e2e8f0; background: #f8fafc !important; color: #1e293b !important; box-sizing: border-box; margin: 8px 0 15px; font-size: 16px; }
+
+        .nav-bar { position: fixed; bottom: 30px; left: 20px; right: 20px; height: 75px; background: #1e293b !important; border-radius: 38px; display: flex; justify-content: space-around; align-items: center; z-index: 100; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .add-circle { width: 68px; height: 68px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 38px; margin-top: -50px; border: 6px solid var(--bg); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
     </style>
 </head>
 <body>
 
 <div class="stats-header">
-    <div style="opacity: 0.8; font-size: 13px;" id="syncStatus">📡 正在重连...</div>
-    <div style="font-size: 36px; font-weight: 900; margin-top: 10px;" id="totalCount">0 位伙伴</div>
+    <div style="opacity: 0.9; font-size: 13px; font-weight: bold;" id="syncStatus">📡 正在全力连接云端...</div>
+    <div style="font-size: 40px; font-weight: 900; margin-top: 10px;" id="totalCount">加载中</div>
 </div>
 
 <input type="text" id="searchBox" placeholder="搜姓名、公司、诉求...">
-
 <div id="customerList"></div>
 
 <div class="nav-bar">
-    <div onclick="location.reload()" style="font-size: 24px;">🏠</div>
+    <div onclick="location.reload()" style="font-size: 26px;">🏠</div>
     <div class="add-circle" onclick="openModal()">+</div>
-    <div style="font-size: 24px;">📦</div>
+    <div onclick="alert('即将上线')" style="font-size: 26px;">📦</div>
 </div>
 
 <div class="modal" id="modal">
     <div class="modal-content">
-        <h2 style="margin: 0 0 20px 0; color: #1e293b;">录入档案</h2>
+        <h2 style="margin: 0 0 20px 0; color: #1e293b;">新客户档案</h2>
         <input type="hidden" id="editId">
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-            <div><label>姓名</label><input type="text" id="name"></div>
-            <div><label>性别</label><select id="gender"><option value="🚹 男">男</option><option value="🚺 女">女</option></select></div>
-        </div>
-        <div style="margin-top:15px;"><label>手机号</label><input type="tel" id="phone"></div>
-        <div style="margin-top:15px;"><label>核心诉求</label><textarea id="demands" rows="4"></textarea></div>
-        <button onclick="save()" id="saveBtn" style="width:100%; padding:18px; background:var(--primary); color:white; border:none; border-radius:20px; font-weight:800; font-size:16px; margin-top:20px;">保存并同步</button>
-        <button onclick="closeModal()" style="width:100%; background:none; border:none; color:#94a3b8; margin-top:15px;">取消返回</button>
+        <label>姓名</label><input type="text" id="name" placeholder="王成">
+        <label>手机号</label><input type="tel" id="phone" placeholder="188...">
+        <label>核心诉求</label><textarea id="demands" rows="4" placeholder="客户最想要什么？"></textarea>
+        <button onclick="save()" id="saveBtn" style="width:100%; padding:20px; background:var(--primary); color:white; border:none; border-radius:22px; font-weight:800; font-size:17px; margin-top:10px;">保存同步</button>
+        <button onclick="closeModal()" style="width:100%; background:none; border:none; color:#94a3b8; margin-top:15px; font-weight:600;">放弃修改</button>
     </div>
 </div>
 
 <script>
     const SB_URL = 'https://vnyjfikjvttwmyzirhzn.supabase.co';
-    // 🔑 重新嵌入你提供的真密钥
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZueWpmaWtqdnR3bXl6aXJoem4iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc2OTA3MTQ1OH0.SFi8Ze98-Qf0M42BupJjwsiqOxYrdauzRjjt3no7_38';
 
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
     let customers = [];
 
     async function init() {
+        document.getElementById('syncStatus').innerText = "⏳ 正在努力重连...";
         try {
             const { data, error } = await supabaseClient.from('customers').select('*').order('created_at', { ascending: false });
             if (error) throw error;
             customers = data || [];
-            document.getElementById('syncStatus').innerText = "✅ 云端已同步";
+            document.getElementById('syncStatus').innerText = "✅ 云端连接成功";
             render();
         } catch (err) { 
-            document.getElementById('syncStatus').innerText = "❌ 连接异常"; 
-            console.error(err);
+            document.getElementById('syncStatus').innerText = "❌ 连接超时，2秒后重试";
+            setTimeout(init, 2000); // 关键：失败自动重连
         }
     }
 
@@ -124,36 +120,41 @@
         res.forEach(c => {
             list.innerHTML += `
                 <div class="card">
-                    <div class="stars">${c.level || '⭐'}</div>
-                    <div class="name">${c.name} <small style="font-weight:normal; color:#94a3b8;">${c.gender || ''}</small></div>
+                    <div class="name">${c.name}</div>
                     <div class="tag">🏢 ${c.company || '私享客户'}</div>
-                    <div class="demand-content" onclick="edit(${c.id})">${c.demands || '暂无诉求记录'}</div>
-                    <div class="action-bar">
-                        <a href="tel:${c.phone}" class="btn btn-call">📞 拨号</a>
-                        <button onclick="alert('已复制')" class="btn btn-wx">💬 微信</button>
-                    </div>
+                    <div class="tag">📞 ${c.phone || '未填'}</div>
+                    <div class="demand-content" onclick="edit(${c.id})">${c.demands || '点击录入诉求...'}</div>
                 </div>
             `;
         });
     }
 
-    // 🏆 拦截返回键
-    function openModal() {
-        document.getElementById('modal').style.display = 'flex';
-        history.pushState({ modal: true }, "");
-    }
-    function closeModal() {
-        document.getElementById('modal').style.display = 'none';
-        if (history.state && history.state.modal) history.back();
-    }
-    window.onpopstate = () => document.getElementById('modal').style.display = 'none';
+    function openModal() { document.getElementById('modal').style.display = 'flex'; history.pushState({modal:true}, ""); }
+    function closeModal() { document.getElementById('modal').style.display = 'none'; }
+    window.onpopstate = closeModal;
 
     async function save() {
         const name = document.getElementById('name').value;
-        if(!name) return alert("必填姓名");
-        const row = { name, gender: document.getElementById('gender').value, phone: document.getElementById('phone').value, demands: document.getElementById('demands').value };
-        await supabaseClient.from('customers').insert([row]);
-        await init(); closeModal();
+        if(!name) return alert("写个名字吧兄弟");
+        const btn = document.getElementById('saveBtn');
+        btn.innerText = "同步中..."; btn.disabled = true;
+        const row = { name, phone: document.getElementById('phone').value, demands: document.getElementById('demands').value };
+        const id = document.getElementById('editId').value;
+        try {
+            if(id) await supabaseClient.from('customers').update(row).eq('id', id);
+            else await supabaseClient.from('customers').insert([row]);
+            await init(); closeModal();
+        } catch (e) { alert("同步失败，请检查网络"); }
+        finally { btn.innerText = "保存同步"; btn.disabled = false; }
+    }
+
+    function edit(id) {
+        const c = customers.find(x => x.id == id);
+        document.getElementById('editId').value = c.id;
+        document.getElementById('name').value = c.name;
+        document.getElementById('phone').value = c.phone || '';
+        document.getElementById('demands').value = c.demands || '';
+        openModal();
     }
 
     init();
