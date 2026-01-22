@@ -3,75 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>私享客 CRM V5.5 - 终极修复版</title>
+    <title>私享客 CRM V5.8 - 灵动交互版</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --primary: #6366f1; --accent: #f59e0b; --text-main: #1e293b; --text-sub: #64748b; }
-        body { font-family: -apple-system, system-ui, sans-serif; margin: 0; padding-bottom: 120px; background: #f1f5f9; color: var(--text-main); }
-        .stats-header { background: white; padding: 30px 20px; border-radius: 0 0 30px 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-        #searchBox { width: calc(100% - 30px); margin: -25px 15px 20px; padding: 16px 25px; border: none; border-radius: 20px; background: white; box-shadow: 0 10px 25px rgba(0,0,0,0.08); font-size: 16px; outline: none; box-sizing: border-box; }
-        .card { background: white; border-radius: 24px; padding: 20px; margin: 0 15px 15px; position: relative; box-shadow: 0 2px 12px rgba(0,0,0,0.03); transition: 0.3s; }
-        .card:active { transform: scale(0.98); }
-        .name { font-size: 20px; font-weight: 700; color: #0f172a; }
-        .gender-tag { font-size: 12px; color: var(--text-sub); background: #f1f5f9; padding: 2px 8px; border-radius: 6px; margin-left: 5px; }
-        .stars { color: var(--accent); font-size: 12px; float: right; }
-        .info-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
-        .mini-tag { font-size: 11px; padding: 4px 10px; border-radius: 8px; background: #f8fafc; color: #475569; border: 1px solid #edf2f7; }
-        .demand-box { background: #fdfaf6; padding: 12px 15px; border-radius: 16px; font-size: 14px; color: #7c2d12; border-left: 4px solid #fbbf24; }
-        .action-bar { display: flex; gap: 12px; margin-top: 15px; }
-        .action-btn { flex: 1; padding: 12px; border-radius: 14px; text-decoration: none; text-align: center; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .btn-call { background: #6366f1; color: white; }
-        .btn-copy { background: #f1f5f9; color: #475569; }
-        .nav { position: fixed; bottom: 30px; left: 30px; right: 30px; background: #1e293b; height: 70px; border-radius: 35px; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
-        .add-btn { width: 60px; height: 60px; background: #6366f1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-top: -40px; border: 5px solid #f1f5f9; }
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: flex-end; backdrop-filter: blur(10px); }
-        .modal-content { background: white; width: 100%; border-radius: 30px 30px 0 0; padding: 25px; box-sizing: border-box; max-height: 85vh; overflow-y: auto; }
-        .form-item { margin-bottom: 15px; }
-        .form-item label { display: block; font-size: 12px; color: var(--text-sub); margin-bottom: 5px; }
-        input, select, textarea { width: 100%; padding: 14px; border: 1px solid #e2e8f0; border-radius: 14px; background: #f8fafc; box-sizing: border-box; }
+        :root { --primary: #6366f1; --accent: #f59e0b; --bg: #f3f4f6; --card: #ffffff; }
+        
+        /* 强制背景为清爽浅色，不随系统黑夜模式变僵硬 */
+        body { 
+            font-family: -apple-system, system-ui, sans-serif; 
+            margin: 0; padding-bottom: 120px; 
+            background-color: var(--bg) !important; 
+            color: #1e293b !important;
+            overflow-x: hidden;
+        }
+
+        .stats-header { 
+            background: linear-gradient(135deg, #4f46e5, #818cf8); 
+            padding: 40px 25px; border-radius: 0 0 40px 40px; 
+            color: white; box-shadow: 0 10px 30px rgba(79, 70, 229, 0.2);
+        }
+
+        #searchBox { 
+            width: calc(100% - 40px); margin: -25px 20px 20px; 
+            padding: 18px 25px; border: none; border-radius: 22px; 
+            background: white; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            font-size: 16px; outline: none; box-sizing: border-box;
+        }
+
+        /* 卡片灵动化：增加呼吸感 */
+        .card { 
+            background: var(--card); border-radius: 28px; padding: 22px; 
+            margin: 0 15px 18px; position: relative; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid rgba(255,255,255,0.8);
+            transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+        .card:active { transform: scale(0.96); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+        .name-row { display: flex; justify-content: space-between; align-items: center; }
+        .name { font-size: 22px; font-weight: 800; color: #0f172a; }
+        .stars { color: var(--accent); font-size: 14px; }
+        
+        .tag-group { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+        .tag { font-size: 12px; padding: 5px 12px; border-radius: 10px; background: #f8fafc; color: #64748b; border: 1px solid #edf2f7; }
+
+        .demand-content { 
+            background: #fffbeb; padding: 15px; border-radius: 18px; 
+            font-size: 15px; color: #92400e; line-height: 1.6;
+            border-left: 5px solid var(--accent); margin-top: 5px;
+        }
+
+        /* 动作按钮美化 */
+        .action-bar { display: flex; gap: 12px; margin-top: 18px; }
+        .btn { 
+            flex: 1; padding: 14px; border-radius: 16px; border: none;
+            font-size: 14px; font-weight: 700; display: flex; 
+            align-items: center; justify-content: center; gap: 8px; text-decoration: none;
+        }
+        .btn-call { background: var(--primary); color: white; box-shadow: 0 8px 15px rgba(99, 102, 241, 0.2); }
+        .btn-wx { background: #f1f5f9; color: #475569; }
+
+        /* 弹窗全屏覆盖优化 */
+        .modal { 
+            display: none; position: fixed; inset: 0; 
+            background: rgba(0,0,0,0.4); z-index: 1000; 
+            align-items: flex-end; backdrop-filter: blur(10px);
+        }
+        .modal-content { 
+            background: white; width: 100%; border-radius: 40px 40px 0 0; 
+            padding: 30px; box-sizing: border-box; max-height: 92vh; overflow-y: auto;
+            animation: slideUp 0.4s cubic-bezier(0, 1, 0.5, 1);
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        .nav-bar { position: fixed; bottom: 30px; left: 20px; right: 20px; height: 75px; background: #1e293b; border-radius: 38px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .add-circle { width: 65px; height: 65px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; margin-top: -45px; border: 6px solid var(--bg); }
     </style>
 </head>
 <body>
 
 <div class="stats-header">
-    <div style="font-size: 12px; color: var(--text-sub);" id="syncStatus">📡 正在连接...</div>
-    <div style="font-size: 30px; font-weight: 800;" id="totalCount">0 位伙伴</div>
+    <div style="opacity: 0.8; font-size: 13px;" id="syncStatus">📡 正在连接...</div>
+    <div style="font-size: 36px; font-weight: 900; margin-top: 10px;" id="totalCount">0 位伙伴</div>
 </div>
 
-<input type="text" id="searchBox" placeholder="快速搜姓名、公司、诉求...">
+<input type="text" id="searchBox" placeholder="搜索姓名、公司、诉求或备注...">
+
 <div id="customerList"></div>
 
-<div class="nav">
-    <div style="color:white;" onclick="location.reload()">🏠</div>
-    <div class="add-btn" onclick="openModal()">+</div>
-    <div style="color:white;" onclick="exportData()">📦</div>
+<div class="nav-bar">
+    <div onclick="location.reload()" style="font-size: 24px;">🏠</div>
+    <div class="add-circle" onclick="openModal()">+</div>
+    <div onclick="exportData()" style="font-size: 24px;">📦</div>
 </div>
 
 <div class="modal" id="modal">
     <div class="modal-content">
-        <h3 style="margin-top:0">编辑档案</h3>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="margin:0">档案详情</h2>
+            <div onclick="closeModal()" style="font-size:24px; color:#cbd5e1;">✕</div>
+        </div>
         <input type="hidden" id="editId">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <div class="form-item"><label>姓名</label><input type="text" id="name"></div>
-            <div class="form-item"><label>性别</label><select id="gender"><option value="🚹 男">男</option><option value="🚺 女">女</option></select></div>
+        
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:15px;">
+            <div><label style="font-size:12px; color:#94a3b8;">姓名</label><input type="text" id="name" style="width:100%; padding:15px; border-radius:15px; border:1px solid #e2e8f0; background:#f8fafc; box-sizing:border-box;"></div>
+            <div><label style="font-size:12px; color:#94a3b8;">性别</label><select id="gender" style="width:100%; padding:15px; border-radius:15px; border:1px solid #e2e8f0; background:#f8fafc;"><option value="🚹 男">男</option><option value="🚺 女">女</option></select></div>
         </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <div class="form-item"><label>等级</label><select id="level"><option value="⭐">⭐</option><option value="⭐⭐⭐">⭐⭐⭐</option><option value="⭐⭐⭐⭐⭐">💎💎💎</option></select></div>
-            <div class="form-item"><label>电话</label><input type="tel" id="phone"></div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:15px;">
+            <div><label style="font-size:12px; color:#94a3b8;">等级</label><select id="level" style="width:100%; padding:15px; border-radius:15px; border:1px solid #e2e8f0; background:#f8fafc;"><option value="⭐">普通⭐</option><option value="⭐⭐⭐">重要⭐⭐⭐</option><option value="⭐⭐⭐⭐⭐">核心💎</option></select></div>
+            <div><label style="font-size:12px; color:#94a3b8;">手机号</label><input type="tel" id="phone" style="width:100%; padding:15px; border-radius:15px; border:1px solid #e2e8f0; background:#f8fafc; box-sizing:border-box;"></div>
         </div>
-        <div class="form-item"><label>微信号</label><input type="text" id="wechat"></div>
-        <div class="form-item"><label>公司</label><input type="text" id="company"></div>
-        <div class="form-item"><label>核心诉求</label><textarea id="demands" rows="3"></textarea></div>
-        <button onclick="save()" id="saveBtn" style="width:100%; padding:16px; background:var(--primary); color:white; border:none; border-radius:16px; font-weight:bold;">保存同步</button>
-        <button id="delBtn" onclick="remove()" style="display:none; width:100%; color:red; background:none; border:none; margin-top:10px;">删除档案</button>
+
+        <div style="margin-bottom:15px;"><label style="font-size:12px; color:#94a3b8;">公司</label><input type="text" id="company" style="width:100%; padding:15px; border-radius:15px; border:1px solid #e2e8f0; background:#f8fafc; box-sizing:border-box;"></div>
+        <div style="margin-bottom:15px;"><label style="font-size:12px; color:#94a3b8;">核心诉求</label><textarea id="demands" rows="4" style="width:100%; padding:15px; border-radius:15px; border:1px solid #e2e8f0; background:#f8fafc; box-sizing:border-box;"></textarea></div>
+
+        <button onclick="save()" id="saveBtn" style="width:100%; padding:18px; background:var(--primary); color:white; border:none; border-radius:20px; font-weight:800; font-size:16px;">保存同步至云端</button>
+        <button id="delBtn" onclick="remove()" style="display:none; width:100%; color:#ef4444; background:none; border:none; margin-top:20px; font-size:14px; font-weight:600;">🗑️ 永久删除此档案</button>
     </div>
 </div>
 
 <script>
     const SB_URL = 'https://vnyjfikjvttwmyzirhzn.supabase.co';
-    // 🔑 这里已经是你提供的真实密钥了
-    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZueWpmaWtqdnR0d215emlyaHpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNzE0NTgsImV4cCI6MjA4NDY0NzQ1OH0.SFi8Ze98-Qf0M42BupJjwsiqOxYrdauzRjjt3no7_38';
-    
+    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZueWpmaWtqdnR3bXl6aXJoem4iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc2OTA3MTQ1OH0.SFi8Ze98-Qf0M42BupJjwsiqOxYrdauzRjjt3no7_38'; // 密钥已更正
+
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
     let customers = [];
 
@@ -80,11 +135,9 @@
             const { data, error } = await supabaseClient.from('customers').select('*').order('created_at', { ascending: false });
             if (error) throw error;
             customers = data || [];
-            document.getElementById('syncStatus').innerText = "✅ 云端连接正常";
+            document.getElementById('syncStatus').innerText = "✅ 数据实时同步";
             render();
-        } catch (err) {
-            document.getElementById('syncStatus').innerText = "❌ 密钥或连接错误";
-        }
+        } catch (err) { document.getElementById('syncStatus').innerText = "❌ 连接异常"; }
     }
 
     function render() {
@@ -96,36 +149,61 @@
         res.forEach(c => {
             list.innerHTML += `
                 <div class="card">
-                    <div class="stars">${c.level}</div>
-                    <div class="name">${c.name}<span class="gender-tag">${c.gender || ''}</span></div>
-                    <div class="info-row">
-                        <span class="mini-tag">🏢 ${c.company || '个人'}</span>
-                        <span class="mini-tag">📅 ${c.created_at.split('T')[0]}</span>
+                    <div class="name-row">
+                        <div class="name">${c.name} <span style="font-size:13px; color:#94a3b8; font-weight:normal;">${c.gender || ''}</span></div>
+                        <div class="stars">${c.level}</div>
                     </div>
-                    <div class="demand-box" onclick="edit(${c.id})">${c.demands || '点击录入诉求...'}</div>
+                    <div class="tag-group">
+                        <span class="tag">🏢 ${c.company || '个人客户'}</span>
+                        <span class="tag">📅 ${c.created_at.split('T')[0]}</span>
+                    </div>
+                    <div class="demand-content" onclick="edit(${c.id})">${c.demands || '点击录入核心诉求...'}</div>
                     <div class="action-bar">
-                        <a href="tel:${c.phone}" class="action-btn btn-call">📞 拨号</a>
-                        <button onclick="copyWx('${c.wechat}')" class="action-btn btn-copy">💬 复制微信</button>
+                        <a href="tel:${c.phone}" class="btn btn-call">📞 直接拨号</a>
+                        <button onclick="copyWx('${c.wechat}')" class="btn btn-wx">💬 复制微信</button>
                     </div>
                 </div>
             `;
         });
     }
 
+    // 🏆 拦截返回键的关键逻辑
+    function openModal() {
+        document.getElementById('modal').style.display = 'flex';
+        // 向历史记录推入一个状态，拦截物理返回键
+        history.pushState({ modalOpen: true }, "");
+    }
+
+    function closeModal() {
+        document.getElementById('modal').style.display = 'none';
+        document.getElementById('editId').value = '';
+        document.querySelectorAll('input, select, textarea').forEach(i => i.value = '');
+        // 如果是点击关闭按钮，则退回历史记录
+        if (history.state && history.state.modalOpen) {
+            history.back();
+        }
+    }
+
+    // 监听返回键：如果弹窗开着，就只关弹窗
+    window.onpopstate = function() {
+        document.getElementById('modal').style.display = 'none';
+    };
+
     async function save() {
         const name = document.getElementById('name').value;
-        if(!name) return alert("姓名必填");
-        const row = { name, gender: document.getElementById('gender').value, level: document.getElementById('level').value, phone: document.getElementById('phone').value, wechat: document.getElementById('wechat').value, company: document.getElementById('company').value, demands: document.getElementById('demands').value };
+        if(!name) return alert("请填写姓名");
+        const btn = document.getElementById('saveBtn');
+        btn.innerText = "同步中..."; btn.disabled = true;
+        const row = { name, gender: document.getElementById('gender').value, level: document.getElementById('level').value, phone: document.getElementById('phone').value, company: document.getElementById('company').value, demands: document.getElementById('demands').value };
         const id = document.getElementById('editId').value;
         try {
             if(id) await supabaseClient.from('customers').update(row).eq('id', id);
             else await supabaseClient.from('customers').insert([row]);
             await init(); closeModal();
         } catch (e) { alert("同步失败"); }
+        finally { btn.innerText = "保存同步至云端"; btn.disabled = false; }
     }
 
-    function openModal() { document.getElementById('modal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('modal').style.display = 'none'; document.getElementById('editId').value = ''; document.querySelectorAll('input, select, textarea').forEach(i => i.value = ''); }
     function edit(id) {
         const c = customers.find(x => x.id == id);
         document.getElementById('editId').value = c.id;
@@ -133,14 +211,15 @@
         document.getElementById('gender').value = c.gender || '🚹 男';
         document.getElementById('level').value = c.level;
         document.getElementById('phone').value = c.phone || '';
-        document.getElementById('wechat').value = c.wechat || '';
         document.getElementById('company').value = c.company || '';
         document.getElementById('demands').value = c.demands || '';
         document.getElementById('delBtn').style.display = 'block';
         openModal();
     }
-    function copyWx(wx) { if(!wx) return alert("未填微信号"); navigator.clipboard.writeText(wx); alert("微信已复制"); }
-    async function remove() { if(confirm("确定删除？")) { await supabaseClient.from('customers').delete().eq('id', document.getElementById('editId').value); await init(); closeModal(); } }
+
+    function copyWx(wx) { if(!wx) return alert("未填微信"); navigator.clipboard.writeText(wx); alert("微信号已复制"); }
+    async function remove() { if(confirm("彻底删除档案？")) { await supabaseClient.from('customers').delete().eq('id', document.getElementById('editId').value); await init(); closeModal(); } }
+    
     init();
     document.getElementById('searchBox').oninput = render;
 </script>
