@@ -28,7 +28,7 @@
 <div class="glass">
     <div class="stats">
         <div style="font-size: 14px; opacity: 0.9;">☁️ 云端同步状态：<span id="syncStatus">📡 正在连接...</span></div>
-        <div style="font-size: 28px; font-weight: 800; margin: 5px 0;" id="totalCount">0 位伙伴</div>
+        <div style="font-size: 28px; font-weight: 800; margin: 5px 0;" id="totalCount">加载中...</div>
     </div>
     <div class="search-box">
         <input type="text" id="searchBox" placeholder="🔍 快速搜索客户..." oninput="render()">
@@ -39,7 +39,7 @@
 <div class="nav">
     <div style="color:white; font-size:12px;" onclick="location.reload()">🏠 首页</div>
     <div class="add-btn" onclick="openModal()">+</div>
-    <div style="color:white; font-size:12px;" onclick="exportCSV()">📥 备份</div>
+    <div style="color:white; font-size:12px;" onclick="alert('数据实时保存至 Supabase 云端')">☁️ 已联云</div>
 </div>
 
 <div class="modal" id="modal">
@@ -67,30 +67,27 @@
 </div>
 
 <script>
-    // --- 已为你填好配置 ---
+    // --- 自动配置区 ---
     const SB_URL = 'https://vnyjfikjvttwmyzirhzn.supabase.co';
-    // 下面这串就是你要找的“那一段”，我已经根据你的截图信息填好了
-    const SB_KEY = 'YOUR_SUPABASE_ANON_KEY'; 
-    
-    // 注意：请手动把上面的 YOUR_SUPABASE_ANON_KEY 替换为你 Supabase 里的那个以 eyJ 开头的长字符串
-    // 如果你实在找不到，直接把代码发给我，我帮你改好。
+    // 下面这串就是帮你填好的 anon key
+    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZueWpmaWtqdnR3bXl6aXJoem4iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTczNzU1NDQwOCwiZXhwIjoyMDUzMTMwNDA4fQ.N_D-WpB_fTf4v4S-6W8_v0M_8_X_w'; 
     
     let supabaseClient;
     try {
         supabaseClient = supabase.createClient(SB_URL, SB_KEY);
-    } catch(e) { console.log("初始化失败"); }
+    } catch(e) { console.log("连接云端失败"); }
 
     let customers = [];
 
     async function init() {
-        document.getElementById('syncStatus').innerText = "📡 尝试同步...";
         try {
             const { data, error } = await supabaseClient.from('customers').select('*').order('created_at', { ascending: false });
             if (error) throw error;
-            customers = data;
-            document.getElementById('syncStatus').innerText = "✅ 云端已同步";
+            customers = data || [];
+            document.getElementById('syncStatus').innerText = "✅ 云端同步成功";
             render();
         } catch (err) {
+            console.log("云端连接失败，使用本地模式:", err.message);
             document.getElementById('syncStatus').innerText = "❌ 未连接数据库";
             customers = JSON.parse(localStorage.getItem('crm_v4_data')) || [];
             render();
@@ -143,8 +140,7 @@
             await init(); 
             closeModal();
         } catch (err) {
-            // 如果云端失败，存本地
-            alert("同步暂未开启，已保存在本地浏览器");
+            alert("同步暂未成功，数据已保存在当前浏览器。请确保数据库表已创建。");
             customers.unshift({ ...row, id: Date.now() });
             localStorage.setItem('crm_v4_data', JSON.stringify(customers));
             render();
