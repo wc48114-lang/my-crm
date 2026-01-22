@@ -3,199 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="color-scheme" content="light">
-    <title>私享客 CRM V6.8 - 丝滑重连版</title>
+    <title>私享客 CRM V5.5 - 轻盈质感版</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --primary: #6366f1; --bg: #f8fafc; --card: #ffffff; }
+        :root { --primary: #6366f1; --accent: #f59e0b; --text-main: #1e293b; --text-sub: #64748b; }
         
-        /* 彻底干掉黑夜模式带来的僵硬感 */
-        html, body { 
-            background-color: var(--bg) !important; 
-            color: #1e293b !important;
-            margin: 0; padding-bottom: 120px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            -webkit-font-smoothing: antialiased;
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            margin: 0; padding-bottom: 120px; 
+            background: #f1f5f9; /* 换成浅灰色背景，让卡片浮起来 */
+            color: var(--text-main);
         }
 
-        .header-sky { 
-            background: linear-gradient(135deg, #4f46e5, #7c3aed); 
-            padding: 50px 25px 70px; border-radius: 0 0 50px 50px; 
-            color: white; box-shadow: 0 15px 30px rgba(79, 70, 229, 0.15);
-            text-align: center;
+        /* 顶部统计区：改为简洁的白色卡片 */
+        .stats-header {
+            background: white; margin: 0 0 20px 0; padding: 30px 20px;
+            border-radius: 0 0 30px 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
 
         #searchBox { 
-            width: calc(100% - 40px); margin: -35px 20px 25px; 
-            padding: 20px 28px; border: none; border-radius: 25px; 
-            background: white !important; color: #1e293b !important;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.08); font-size: 16px; outline: none; box-sizing: border-box;
+            width: calc(100% - 30px); margin: -25px 15px 20px; 
+            padding: 16px 25px; border: none; border-radius: 20px; 
+            background: white; box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            font-size: 16px; outline: none; box-sizing: border-box;
         }
 
-        .customer-card { 
-            background: var(--card) !important; border-radius: 30px; padding: 25px; 
-            margin: 0 18px 20px; position: relative; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
-            transition: transform 0.2s; border: 1px solid rgba(255,255,255,1);
+        /* 核心卡片重构 */
+        .card { 
+            background: white; border-radius: 24px; padding: 20px; 
+            margin: 0 15px 15px; position: relative; 
+            box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+            border: 1px solid rgba(255,255,255,1);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .customer-card:active { transform: scale(0.98); }
+        .card:active { transform: scale(0.98); background: #fafafa; }
 
-        .name-tag { font-size: 22px; font-weight: 800; color: #0f172a; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-        .info-pill { font-size: 12px; padding: 6px 14px; border-radius: 12px; background: #f1f5f9; color: #64748b; font-weight: 600; }
-        
+        /* 信息分层处理 */
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .name { font-size: 20px; font-weight: 700; color: #0f172a; }
+        .gender-tag { font-size: 12px; color: var(--text-sub); background: #f1f5f9; padding: 2px 8px; border-radius: 6px; margin-left: 5px; }
+        .stars { color: var(--accent); letter-spacing: 2px; font-size: 12px; }
+
+        .info-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+        .mini-tag { font-size: 11px; padding: 4px 10px; border-radius: 8px; background: #f8fafc; color: #475569; border: 1px solid #edf2f7; }
+
         .demand-box { 
-            background: #fffbeb !important; padding: 18px; border-radius: 20px; 
-            font-size: 15px; color: #92400e !important; line-height: 1.6;
-            margin-top: 15px; border-left: 6px solid #fbbf24;
+            background: #fdfaf6; padding: 12px 15px; border-radius: 16px; 
+            font-size: 14px; color: #7c2d12; line-height: 1.5;
+            border-left: 4px solid #fbbf24; margin-top: 10px;
         }
 
-        /* 底部导航栏：灵动悬浮 */
-        .bottom-nav { 
-            position: fixed; bottom: 30px; left: 25px; right: 25px; 
-            height: 75px; background: #1e293b; border-radius: 35px; 
-            display: flex; justify-content: space-around; align-items: center; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3); z-index: 999;
+        /* 底部动作条：更简洁 */
+        .action-bar { display: flex; gap: 12px; margin-top: 15px; }
+        .action-btn { 
+            flex: 1; padding: 12px; border-radius: 14px; border: none;
+            font-size: 13px; font-weight: 600; text-decoration: none;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
         }
-        .main-add-btn { 
-            width: 70px; height: 70px; background: var(--primary); color: white; 
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-            font-size: 40px; margin-top: -55px; border: 6px solid var(--bg);
-            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
-        }
+        .btn-call { background: #6366f1; color: white; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2); }
+        .btn-copy { background: #f1f5f9; color: #475569; }
 
-        /* 弹窗：苹果风半透明 */
-        .glass-modal { 
-            display: none; position: fixed; inset: 0; 
-            background: rgba(0,0,0,0.4); z-index: 1000; 
-            align-items: flex-end; backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px);
-        }
-        .modal-sheet { 
-            background: white !important; width: 100%; border-radius: 40px 40px 0 0; 
-            padding: 35px 30px; box-sizing: border-box; max-height: 90vh; overflow-y: auto;
-        }
-        
-        input, textarea { 
-            width: 100%; padding: 18px; margin: 10px 0 20px; 
-            border-radius: 18px; border: 1px solid #e2e8f0; 
-            background: #f8fafc !important; font-size: 16px; box-sizing: border-box;
-        }
-        .save-btn { 
-            width: 100%; padding: 20px; background: var(--primary); 
-            color: white; border: none; border-radius: 22px; 
-            font-weight: 800; font-size: 18px; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
-        }
+        /* 导航条 */
+        .nav { position: fixed; bottom: 30px; left: 30px; right: 30px; background: #1e293b; height: 70px; border-radius: 35px; display: flex; justify-content: space-around; align-items: center; z-index: 100; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .add-btn { width: 60px; height: 60px; background: #6366f1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-top: -40px; border: 5px solid #f1f5f9; }
+
+        /* 弹窗中的输入框间距优化 */
+        .form-item { margin-bottom: 15px; }
+        .form-item label { display: block; font-size: 12px; color: var(--text-sub); margin-bottom: 5px; margin-left: 5px; }
+        input, select, textarea { width: 100%; padding: 14px; border: 1px solid #e2e8f0; border-radius: 14px; font-size: 15px; box-sizing: border-box; background: #f8fafc; transition: 0.3s; }
+        input:focus { border-color: var(--primary); background: white; outline: none; }
     </style>
 </head>
 <body>
 
-<div class="header-sky">
-    <div style="font-size: 14px; font-weight: 600; opacity: 0.9;" id="connStatus">🔗 正在读取云端档案...</div>
-    <div style="font-size: 42px; font-weight: 900; margin-top: 12px;" id="totalCount">...</div>
+<div class="stats-header">
+    <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 5px;" id="syncStatus">📡 正在连接云端...</div>
+    <div style="font-size: 30px; font-weight: 800;" id="totalCount">0 位伙伴</div>
 </div>
 
-<input type="text" id="searchBox" placeholder="搜索伙伴姓名、诉求或手机号...">
-<div id="cardList"></div>
+<input type="text" id="searchBox" placeholder="快速搜姓名、公司、备注...">
 
-<div class="bottom-nav">
-    <div onclick="location.reload()" style="font-size: 26px;">🏠</div>
-    <div class="main-add-btn" onclick="openAdd()">+</div>
-    <div onclick="alert('即将上线')" style="font-size: 26px;">📦</div>
+<div id="customerList"></div>
+
+<div class="nav">
+    <div style="color:white; text-align:center;" onclick="location.reload()">🏠</div>
+    <div class="add-btn" onclick="openModal()">+</div>
+    <div style="color:white; text-align:center;" onclick="exportData()">📦</div>
 </div>
 
-<div class="glass-modal" id="formModal">
-    <div class="modal-sheet">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
-            <h2 style="margin:0; font-size:24px;">录入客户信息</h2>
-            <div onclick="closeAdd()" style="color:#cbd5e1; font-size:28px;">✕</div>
+<div class="modal" id="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:flex-end; backdrop-filter:blur(10px);">
+    <div class="modal-content" style="background:white; width:100%; border-radius:30px 30px 0 0; padding:25px; box-sizing:border-box; max-height:85vh; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3 style="margin:0">客户档案编辑</h3>
+            <span onclick="closeModal()" style="color:var(--text-sub); font-size:20px;">✕</span>
         </div>
+        
         <input type="hidden" id="editId">
-        <label style="font-weight:bold; color:#64748b; font-size:13px;">姓名</label>
-        <input type="text" id="name" placeholder="请输入姓名">
-        <label style="font-weight:bold; color:#64748b; font-size:13px;">核心诉求</label>
-        <textarea id="demands" rows="4" placeholder="他最看重什么？"></textarea>
-        <button onclick="saveData()" id="saveBtn" class="save-btn">保存并同步云端</button>
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-item"><label>姓名</label><input type="text" id="name" placeholder="必填"></div>
+            <div class="form-item"><label>性别</label><select id="gender"><option value="🚹 男">男</option><option value="🚺 女">女</option><option value="未指定">保密</option></select></div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-item"><label>生日</label><input type="date" id="birthday"></div>
+            <div class="form-item"><label>等级</label><select id="level"><option value="⭐">普通⭐</option><option value="⭐⭐⭐">重要⭐⭐⭐</option><option value="⭐⭐⭐⭐⭐">核心💎</option></select></div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-item"><label>手机号</label><input type="tel" id="phone"></div>
+            <div class="form-item"><label>微信号</label><input type="text" id="wechat"></div>
+        </div>
+
+        <div class="form-item"><label>所属公司</label><input type="text" id="company"></div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-item"><label>状态</label><select id="status"><option value="💡 初步接触">初步接触</option><option value="🤝 正式签约">正式签约</option><option value="⏸️ 暂时搁置">暂时搁置</option></select></div>
+            <div class="form-item"><label>来源</label><select id="source"><option value="朋友推荐">朋友推荐</option><option value="网络搜索">网络搜索</option></select></div>
+        </div>
+
+        <div class="form-item"><label>核心诉求</label><textarea id="demands" rows="3"></textarea></div>
+        
+        <button onclick="save()" id="saveBtn" style="width:100%; padding:16px; background:var(--primary); color:white; border:none; border-radius:16px; font-weight:bold; font-size:16px; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);">同步更新到云端</button>
+        <button id="delBtn" onclick="remove()" style="display:none; width:100%; color:#ef4444; background:none; border:none; margin-top:15px; font-size:13px;">🗑️ 删除此客户档案</button>
     </div>
 </div>
 
 <script>
     const SB_URL = 'https://vnyjfikjvttwmyzirhzn.supabase.co';
-    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZueWpmaWtqdnR3bXl6aXJoem4iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc2OTA3MTQ1OH0.SFi8Ze98-Qf0M42BupJjwsiqOxYrdauzRjjt3no7_38';
-    const client = supabase.createClient(SB_URL, SB_KEY);
+    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZueWpmaWtqdnR0d215emlyaHpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNzE0NTgsImV4cCI6MjA4NDY0NzQ1OH0.SFi8Ze98-Qf0M42BupJjwsiqOxYrdauzRjjt3no7_38'; 
+    
+    const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
+    let customers = [];
 
-    let allCustomers = [];
-
-    async function load() {
+    async function init() {
         try {
-            const { data, error } = await client.from('customers').select('*').order('created_at', { ascending: false });
+            const { data, error } = await supabaseClient.from('customers').select('*').order('created_at', { ascending: false });
             if (error) throw error;
-            allCustomers = data || [];
-            document.getElementById('connStatus').innerText = "✅ 数据同步已就绪";
-            renderCards();
-        } catch (e) {
-            document.getElementById('connStatus').innerText = "⚠️ 连接不稳定，重连中...";
-            setTimeout(load, 3000);
+            customers = data || [];
+            document.getElementById('syncStatus').innerText = "✅ 云端连接正常";
+            render();
+        } catch (err) {
+            document.getElementById('syncStatus').innerText = "❌ 连接失败";
         }
     }
 
-    function renderCards() {
+    function render() {
         const kw = document.getElementById('searchBox').value.toLowerCase();
-        const container = document.getElementById('cardList');
-        const filtered = allCustomers.filter(c => JSON.stringify(c).toLowerCase().includes(kw));
-        document.getElementById('totalCount').innerText = `${filtered.length} 位伙伴`;
-        
-        container.innerHTML = filtered.map(c => `
-            <div class="customer-card">
-                <div class="name-tag">
-                    ${c.name} 
-                    <span class="info-pill">📱 ${c.phone || '未记录'}</span>
+        const list = document.getElementById('customerList');
+        list.innerHTML = '';
+        const res = customers.filter(c => Object.values(c).some(v => String(v).toLowerCase().includes(kw)));
+        document.getElementById('totalCount').innerText = `${res.length} 位伙伴`;
+
+        res.forEach(c => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="name">${c.name}<span class="gender-tag">${c.gender || ''}</span></div>
+                    <div class="stars">${c.level}</div>
                 </div>
-                <div class="demand-box" onclick="editNow(${c.id})">
-                    ${c.demands || '点击录入核心诉求...'}
+                <div class="info-row">
+                    <span class="mini-tag">🏢 ${c.company || '个人客户'}</span>
+                    <span class="mini-tag">${c.status}</span>
+                    ${c.birthday ? `<span class="mini-tag">🎂 ${c.birthday}</span>` : ''}
                 </div>
-            </div>
-        `).join('');
+                <div class="demand-box" onclick="edit(${c.id})">
+                    ${c.demands || '点击添加诉求记录...'}
+                </div>
+                <div class="action-bar">
+                    <a href="tel:${c.phone}" class="action-btn btn-call">📞 拨号</a>
+                    <button onclick="copyWx('${c.wechat}')" class="action-btn btn-copy">💬 微信</button>
+                </div>
+            `;
+            list.appendChild(card);
+        });
     }
 
-    // 🏆 拦截返回键逻辑
-    function openAdd() {
-        document.getElementById('formModal').style.display = 'flex';
-        history.pushState({modalOpen: true}, "");
-    }
-    function closeAdd() {
-        document.getElementById('formModal').style.display = 'none';
-        if(history.state && history.state.modalOpen) history.back();
-    }
-    window.onpopstate = () => document.getElementById('formModal').style.display = 'none';
-
-    async function saveData() {
-        const n = document.getElementById('name').value;
-        if(!n) return alert("姓名是必须的哦");
+    // 后续保存、编辑、删除逻辑（已优化反馈）
+    async function save() {
+        const name = document.getElementById('name').value;
+        if(!name) return alert("姓名不能为空");
         const btn = document.getElementById('saveBtn');
-        btn.innerText = "正在同步..."; btn.disabled = true;
-        
-        const payload = { name: n, demands: document.getElementById('demands').value };
-        const eid = document.getElementById('editId').value;
-
+        btn.innerText = "正在更新..."; btn.disabled = true;
+        const row = {
+            name, gender: document.getElementById('gender').value,
+            birthday: document.getElementById('birthday').value || null,
+            level: document.getElementById('level').value,
+            phone: document.getElementById('phone').value,
+            wechat: document.getElementById('wechat').value,
+            company: document.getElementById('company').value,
+            status: document.getElementById('status').value,
+            source: document.getElementById('source').value,
+            demands: document.getElementById('demands').value
+        };
+        const id = document.getElementById('editId').value;
         try {
-            if(eid) await client.from('customers').update(payload).eq('id', eid);
-            else await client.from('customers').insert([payload]);
-            await load();
-            closeAdd();
-        } catch(e) { alert("同步失败"); }
-        finally { btn.innerText = "保存并同步云端"; btn.disabled = false; }
+            if(id) await supabaseClient.from('customers').update(row).eq('id', id);
+            else await supabaseClient.from('customers').insert([row]);
+            await init(); closeModal();
+        } catch (e) { alert("保存失败"); }
+        finally { btn.innerText = "同步更新到云端"; btn.disabled = false; }
     }
 
-    function editNow(id) {
-        const c = allCustomers.find(x => x.id == id);
+    function openModal() { document.getElementById('modal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('modal').style.display = 'none'; document.getElementById('editId').value = ''; document.querySelectorAll('input, select, textarea').forEach(i => i.value = ''); }
+    function edit(id) {
+        const c = customers.find(x => x.id == id);
         document.getElementById('editId').value = c.id;
         document.getElementById('name').value = c.name;
+        document.getElementById('gender').value = c.gender || '';
+        document.getElementById('birthday').value = c.birthday || '';
+        document.getElementById('level').value = c.level;
+        document.getElementById('phone').value = c.phone || '';
+        document.getElementById('wechat').value = c.wechat || '';
+        document.getElementById('company').value = c.company || '';
+        document.getElementById('status').value = c.status;
+        document.getElementById('source').value = c.source || '';
         document.getElementById('demands').value = c.demands || '';
-        openAdd();
+        document.getElementById('delBtn').style.display = 'block';
+        openModal();
     }
-
-    load();
-    document.getElementById('searchBox').oninput = renderCards;
+    function copyWx(wx) { if(!wx) return alert("未填微信号"); navigator.clipboard.writeText(wx); alert("微信号已复制"); }
+    async function remove() { if(confirm("确定彻底删除该档案吗？")) { await supabaseClient.from('customers').delete().eq('id', document.getElementById('editId').value); await init(); closeModal(); } }
+    init();
+    document.getElementById('searchBox').oninput = render;
 </script>
 </body>
 </html>
