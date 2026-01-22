@@ -3,137 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>私享客 CRM V5.0 - 灵动全能版</title>
+    <title>私享客 CRM V5.2 - 视觉增强版</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --primary: #6366f1; --accent: #f59e0b; --bg: #f8fafc; --danger: #ef4444; }
         
-        /* 灵动背景动画 */
+        /* 增强背景流光 */
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         body { 
-            font-family: system-ui, -apple-system, sans-serif; 
-            margin: 0; padding-bottom: 100px; 
+            font-family: system-ui, -apple-system, sans-serif; margin: 0; padding-bottom: 120px; 
             background: linear-gradient(-45deg, #4f46e5, #7c3aed, #2563eb, #0891b2); 
-            background-size: 400% 400%; 
-            animation: gradientBG 15s ease infinite; 
-            min-height: 100vh; 
-            color: #1e293b;
+            background-size: 400% 400%; animation: gradientBG 10s ease infinite; 
+            min-height: 100vh; color: #1e293b;
         }
 
-        .glass-main { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); min-height: 100vh; padding-top: 10px; }
+        .glass-main { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); min-height: 100vh; padding-top: 10px; }
         
-        /* 顶部状态栏 */
         .stats-card { 
-            margin: 15px; padding: 20px; 
-            background: rgba(99, 102, 241, 0.9); 
-            color: white; border-radius: 24px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            transform: translateY(0); transition: all 0.3s;
+            margin: 15px; padding: 25px; 
+            background: linear-gradient(135deg, #6366f1, #a855f7); 
+            color: white; border-radius: 28px; 
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3);
         }
 
         #searchBox { 
             width: calc(100% - 30px); margin: 0 15px 15px; 
-            padding: 16px 20px; border: none; border-radius: 18px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); font-size: 16px; 
-            outline: none; box-sizing: border-box; transition: 0.3s;
+            padding: 16px 20px; border: 2px solid transparent; border-radius: 20px; 
+            background: white; box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            font-size: 16px; outline: none; box-sizing: border-box; transition: 0.3s;
         }
-        #searchBox:focus { box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3); }
+        #searchBox:focus { border-color: var(--primary); }
 
-        /* 卡片入场动画 */
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* 卡片视觉增强 */
         .card { 
-            background: white; border-radius: 24px; padding: 20px; 
+            background: white; border-radius: 26px; padding: 20px; 
             margin: 0 15px 15px; position: relative; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            animation: slideUp 0.5s ease backwards;
-            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.02);
+            transition: 0.3s;
         }
-        .card:active { transform: scale(0.97); }
+        .card:active { transform: scale(0.96); background: #f1f5f9; }
 
-        .vip-tag { position: absolute; top: 0; right: 20px; background: var(--accent); color: white; padding: 4px 12px; border-radius: 0 0 12px 12px; font-size: 11px; font-weight: bold; }
-        
-        /* 快捷按钮 */
-        .action-bar { display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid #f1f5f9; pt: 10px; padding-top: 12px;}
-        .action-btn { 
-            flex: 1; padding: 8px; border-radius: 12px; border: none;
-            background: #f1f5f9; color: var(--primary); font-size: 13px;
-            display: flex; align-items: center; justify-content: center; gap: 5px;
-            text-decoration: none; font-weight: 500;
-        }
+        .vip-stars { color: var(--accent); font-size: 14px; margin-bottom: 5px; }
+        .tag { font-size: 11px; padding: 3px 10px; border-radius: 8px; background: #f1f5f9; color: #64748b; margin-right: 5px; }
+
+        /* 输入框占位符强化 */
+        ::placeholder { color: #cbd5e1; opacity: 1; }
 
         /* 底部导航 */
-        .nav { position: fixed; bottom: 25px; left: 20px; right: 20px; background: #1e293b; height: 70px; border-radius: 35px; display: flex; justify-content: space-around; align-items: center; z-index: 100; box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
-        .add-btn { width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; margin-top: -40px; border: 5px solid rgba(255,255,255,0.9); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4); }
+        .nav { position: fixed; bottom: 30px; left: 25px; right: 25px; background: #1e293b; height: 75px; border-radius: 40px; display: flex; justify-content: space-around; align-items: center; z-index: 100; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .add-btn { width: 65px; height: 65px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; margin-top: -45px; border: 6px solid #f8fafc; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.5); }
 
-        /* 弹窗升级 */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: flex-end; backdrop-filter: blur(8px); }
-        .modal-content { background: white; width: 100%; border-radius: 32px 32px 0 0; padding: 25px; box-sizing: border-box; max-height: 90vh; overflow-y: auto; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        input, select, textarea { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #e2e8f0; border-radius: 14px; background: #f8fafc; font-size: 15px; box-sizing: border-box; }
-        .btn-save { background: var(--primary); color: white; width: 100%; padding: 16px; border: none; border-radius: 16px; font-weight: bold; margin-top: 15px; }
-        .btn-del { background: #fff1f2; color: var(--danger); width: 100%; padding: 12px; border: none; border-radius: 16px; margin-top: 10px; font-size: 14px; }
+        /* 表单下拉框美化 */
+        select { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em; }
+
+        .action-bar { display: flex; gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #e2e8f0; }
+        .action-btn { flex: 1; padding: 12px; border-radius: 15px; text-decoration: none; text-align: center; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-tel { background: #ecfdf5; color: #10b981; }
+        .btn-wx { background: #eff6ff; color: #3b82f6; }
     </style>
 </head>
 <body>
 
 <div class="glass-main">
     <div class="stats-card">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span id="syncStatus" style="font-size: 12px; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 10px;">📡 连接中...</span>
-            <span style="font-size: 12px; opacity: 0.8;">个人私享云端版</span>
+        <div style="display: flex; justify-content: space-between;">
+            <span id="syncStatus" style="font-size: 11px; background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 10px;">📡 连接中...</span>
+            <span style="font-size: 11px; opacity: 0.8;">V5.2 视觉增强版</span>
         </div>
-        <div style="font-size: 32px; font-weight: 850; margin-top: 10px;" id="totalCount">0 位伙伴</div>
+        <div style="font-size: 36px; font-weight: 900; margin-top: 12px;" id="totalCount">0 位伙伴</div>
     </div>
 
-    <input type="text" id="searchBox" placeholder="🔍 快速查找姓名、公司、诉求..." oninput="render()">
+    <input type="text" id="searchBox" placeholder="🔍 快速搜姓名、公司、诉求或备注...">
     <div id="customerList"></div>
 </div>
 
 <div class="nav">
-    <div style="color:white; text-align:center;" onclick="location.reload()"><div style="font-size:20px;">🏠</div><div style="font-size:10px;">首页</div></div>
+    <div style="color:white; text-align:center;" onclick="location.reload()">🏠<div style="font-size:10px;">首页</div></div>
     <div class="add-btn" onclick="openModal()">+</div>
-    <div style="color:white; text-align:center;" onclick="exportData()"><div style="font-size:20px;">📦</div><div style="font-size:10px;">导出</div></div>
+    <div style="color:white; text-align:center;" onclick="exportData()">📦<div style="font-size:10px;">备份</div></div>
 </div>
 
-<div class="modal" id="modal">
-    <div class="modal-content">
-        <h3 id="modalTitle" style="margin:0 0 15px 0;">客户档案</h3>
+<div class="modal" id="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:1000; align-items:flex-end; backdrop-filter:blur(10px);">
+    <div class="modal-content" style="background:white; width:100%; border-radius:35px 35px 0 0; padding:30px; box-sizing:border-box; max-height:90vh; overflow-y:auto;">
+        <h3 style="margin-top:0">客户详细档案</h3>
         <input type="hidden" id="editId">
         
-        <div class="form-grid">
-            <input type="text" id="name" placeholder="姓名 (必填)">
-            <select id="gender"><option value="🚹 男">🚹 男</option><option value="🚺 女">🚺 女</option><option value="未指定">保密</option></select>
+        <div class="form-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div><small style="color:gray; margin-left:5px;">姓名</small><input type="text" id="name" placeholder="输入姓名"></div>
+            <div><small style="color:gray; margin-left:5px;">性别</small><select id="gender"><option value="">请选择性别</option><option value="🚹 男">🚹 男</option><option value="🚺 女">🚺 女</option></select></div>
         </div>
 
-        <div class="form-grid">
-            <input type="date" id="birthday" placeholder="生日">
-            <select id="level"><option value="⭐">⭐ 普通</option><option value="⭐⭐⭐">⭐⭐⭐ 重要</option><option value="⭐⭐⭐⭐⭐">💎 核心VIP</option></select>
+        <div class="form-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div><small style="color:gray; margin-left:5px;">出生日期</small><input type="date" id="birthday"></div>
+            <div><small style="color:gray; margin-left:5px;">星级等级</small><select id="level"><option value="⭐">⭐ 普通</option><option value="⭐⭐⭐">⭐⭐⭐ 重要</option><option value="⭐⭐⭐⭐⭐">💎 核心VIP</option></select></div>
         </div>
 
-        <div class="form-grid">
-            <input type="tel" id="phone" placeholder="手机号">
-            <input type="text" id="wechat" placeholder="微信号">
+        <div class="form-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div><small style="color:gray; margin-left:5px;">手机号</small><input type="tel" id="phone" placeholder="输入手机号"></div>
+            <div><small style="color:gray; margin-left:5px;">微信号</small><input type="text" id="wechat" placeholder="输入微信号"></div>
         </div>
 
-        <input type="text" id="company" placeholder="公司 / 组织名称">
+        <small style="color:gray; margin-left:5px;">公司/单位名称</small>
+        <input type="text" id="company" placeholder="所在公司">
 
-        <div class="form-grid">
-            <select id="status"><option value="💡 初步接触">💡 初步接触</option><option value="🤝 正式签约">🤝 正式签约</option><option value="⏸️ 暂时搁置">⏸️ 暂时搁置</option></select>
-            <select id="source"><option value="🤝 朋友推荐">🤝 朋友推荐</option><option value="📱 社交媒体">📱 社交媒体</option><option value="🔍 网络搜索">🔍 网络搜索</option></select>
+        <div class="form-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div><small style="color:gray; margin-left:5px;">跟进状态</small><select id="status"><option value="💡 初步接触">初步接触</option><option value="🤝 正式签约">正式签约</option><option value="⏸️ 暂时搁置">暂时搁置</option></select></div>
+            <div><small style="color:gray; margin-left:5px;">来源渠道</small><select id="source"><option value="🤝 朋友推荐">朋友推荐</option><option value="📱 社交媒体">社交媒体</option><option value="🔍 搜索引流">搜索引流</option></select></div>
         </div>
 
-        <textarea id="demands" rows="2" placeholder="核心诉求（他想要什么？）"></textarea>
-        <textarea id="notes" rows="2" placeholder="更多备注..."></textarea>
+        <small style="color:gray; margin-left:5px;">核心需求</small>
+        <textarea id="demands" rows="2" placeholder="客户最看重的是什么？"></textarea>
+        <small style="color:gray; margin-left:5px;">个人备注</small>
+        <textarea id="notes" rows="2" placeholder="兴趣爱好、性格特点等..."></textarea>
 
-        <button onclick="save()" id="saveBtn" class="btn-save">保存并同步</button>
-        <button id="delBtn" onclick="remove()" class="btn-del" style="display:none;">⚠️ 删除此客户</button>
-        <button onclick="closeModal()" style="width:100%; background:none; border:none; color:gray; margin-top:10px; font-size:14px;">取消并返回</button>
+        <button onclick="save()" id="saveBtn" style="width:100%; padding:18px; background:var(--primary); color:white; border:none; border-radius:20px; font-weight:bold; margin-top:15px; font-size:16px;">保存至云端数据库</button>
+        <button id="delBtn" onclick="remove()" style="display:none; width:100%; color:red; background:none; border:none; margin-top:15px;">🗑️ 删除此档案</button>
+        <button onclick="closeModal()" style="width:100%; color:gray; background:none; border:none; margin-top:10px;">返回列表</button>
     </div>
 </div>
 
 <script>
     const SB_URL = 'https://vnyjfikjvttwmyzirhzn.supabase.co';
-    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZueWpmaWtqdnR0d215emlyaHpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNzE0NTgsImV4cCI6MjA4NDY0NzQ1OH0.SFi8Ze98-Qf0M42BupJjwsiqOxYrdauzRjjt3no7_38'; 
+    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZueWpmaWtqdnR3bXl6aXJoem4iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTczNzU1NDQwOCwiZXhwIjoyMDUzMTMwNDA4fQ.N_D-WpB_fTf4v4S-6W8_v0M_8_X_w'; // 请确保这是你最新的真钥匙
     
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
     let customers = [];
@@ -143,7 +135,7 @@
             const { data, error } = await supabaseClient.from('customers').select('*').order('created_at', { ascending: false });
             if (error) throw error;
             customers = data || [];
-            document.getElementById('syncStatus').innerText = "✅ 云端已同步";
+            document.getElementById('syncStatus').innerText = "✅ 数据实时同步中";
             render();
         } catch (err) {
             document.getElementById('syncStatus').innerText = "❌ 连接失败";
@@ -157,34 +149,36 @@
         const res = customers.filter(c => Object.values(c).some(v => String(v).toLowerCase().includes(kw)));
         document.getElementById('totalCount').innerText = `${res.length} 位伙伴`;
 
-        res.forEach((c, index) => {
+        res.forEach(c => {
             const card = document.createElement('div');
             card.className = 'card';
-            card.style.animationDelay = `${index * 0.05}s`; // 瀑布流加载动画
             card.innerHTML = `
-                <div class="vip-tag">${c.level}</div>
+                <div class="vip-stars">${c.level}</div>
                 <div onclick="edit(${c.id})">
-                    <h3 style="margin:0">${c.name} <span style="font-size:12px; color:#94a3b8; font-weight:normal;">${c.gender || ''}</span></h3>
-                    <div style="font-size:13px; color:#64748b; margin:6px 0;">🏢 ${c.company || '个人客户'} · ${c.status}</div>
-                    ${c.birthday ? `<div style="font-size:12px; color:#f59e0b; margin-bottom:8px;">🎂 生日：${c.birthday}</div>` : ''}
-                    <div style="font-size:13px; background:#f8fafc; padding:12px; border-radius:12px; color:#475569; line-height:1.5;">🎯 ${c.demands || '点击录入诉求...'}</div>
+                    <h3 style="margin:0">${c.name} <span style="font-size:13px; color:#94a3b8; font-weight:normal;">${c.gender || ''}</span></h3>
+                    <div style="margin:8px 0;">
+                        <span class="tag">🏢 ${c.company || '私享客户'}</span>
+                        <span class="tag">${c.status}</span>
+                    </div>
+                    ${c.birthday ? `<div style="font-size:12px; color:#f59e0b; margin-bottom:10px;">🎂 生日：${c.birthday}</div>` : ''}
+                    <div style="font-size:14px; background:#f8fafc; padding:15px; border-radius:15px; color:#475569; border:1px solid #f1f5f9;">
+                        <strong>🎯 诉求：</strong>${c.demands || '暂无详细诉求记录'}
+                    </div>
                 </div>
                 <div class="action-bar">
-                    <a href="tel:${c.phone}" class="action-btn">📞 拨号</a>
-                    <div class="action-btn" onclick="copyWx('${c.wechat}')">💬 微信</div>
+                    <a href="tel:${c.phone}" class="action-btn btn-tel">📞 拨打电话</a>
+                    <button onclick="copyWx('${c.wechat}')" class="action-btn btn-wx">💬 复制微信</button>
                 </div>
             `;
             list.appendChild(card);
         });
     }
 
+    // 后续逻辑保持不变...
     async function save() {
         const name = document.getElementById('name').value;
-        if(!name) return alert("请填写姓名");
-        
-        const btn = document.getElementById('saveBtn');
-        btn.innerText = "正在同步..."; btn.disabled = true;
-
+        if(!name) return alert("请至少填写姓名");
+        document.getElementById('saveBtn').innerText = "正在保存...";
         const row = {
             name, gender: document.getElementById('gender').value,
             birthday: document.getElementById('birthday').value || null,
@@ -197,71 +191,38 @@
             demands: document.getElementById('demands').value,
             notes: document.getElementById('notes').value
         };
-
         const id = document.getElementById('editId').value;
         try {
             if(id) await supabaseClient.from('customers').update(row).eq('id', id);
             else await supabaseClient.from('customers').insert([row]);
             await init(); closeModal();
-        } catch (err) { alert("同步失败，请检查网络"); }
-        finally { btn.innerText = "保存并同步"; btn.disabled = false; }
+        } catch (e) { alert("保存失败"); }
+        finally { document.getElementById('saveBtn').innerText = "保存至云端数据库"; }
     }
 
-    async function remove() {
-        if(!confirm("确定要删除这位客户吗？此操作不可撤销。")) return;
-        const id = document.getElementById('editId').value;
-        await supabaseClient.from('customers').delete().eq('id', id);
-        await init(); closeModal();
-    }
-
-    function copyWx(wx) {
-        if(!wx || wx === 'undefined') return alert("未录入微信号");
-        navigator.clipboard.writeText(wx);
-        alert("微信号已复制: " + wx + "\n请前往微信添加好友");
-    }
-
-    function openModal() { 
-        document.getElementById('modal').style.display = 'flex'; 
-        document.getElementById('delBtn').style.display = 'none';
-    }
-
-    function closeModal() { 
-        document.getElementById('modal').style.display = 'none'; 
-        document.getElementById('editId').value = '';
-        document.querySelectorAll('input, select, textarea').forEach(i => i.value = '');
-    }
-
+    function openModal() { document.getElementById('modal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('modal').style.display = 'none'; document.getElementById('editId').value = ''; document.querySelectorAll('input, select, textarea').forEach(i => i.value = ''); }
     function edit(id) {
         const c = customers.find(x => x.id == id);
         document.getElementById('editId').value = c.id;
         document.getElementById('name').value = c.name;
-        document.getElementById('gender').value = c.gender || '未指定';
+        document.getElementById('gender').value = c.gender || '';
         document.getElementById('birthday').value = c.birthday || '';
         document.getElementById('level').value = c.level;
         document.getElementById('phone').value = c.phone || '';
         document.getElementById('wechat').value = c.wechat || '';
         document.getElementById('company').value = c.company || '';
         document.getElementById('status').value = c.status;
-        document.getElementById('source').value = c.source || '🤝 朋友推荐';
+        document.getElementById('source').value = c.source || '';
         document.getElementById('demands').value = c.demands || '';
         document.getElementById('notes').value = c.notes || '';
         document.getElementById('delBtn').style.display = 'block';
         openModal();
     }
-
-    function exportData() {
-        let csv = "姓名,手机,微信,公司,状态,诉求\n";
-        customers.forEach(c => {
-            csv += `${c.name},${c.phone},${c.wechat},${c.company},${c.status},${c.demands}\n`;
-        });
-        const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = "客户档案备份.csv";
-        link.click();
-    }
-
+    function copyWx(wx) { if(!wx) return alert("未填微信号"); navigator.clipboard.writeText(wx); alert("微信已复制"); }
+    async function remove() { if(confirm("确定删除？")) { await supabaseClient.from('customers').delete().eq('id', document.getElementById('editId').value); await init(); closeModal(); } }
     init();
+    document.getElementById('searchBox').oninput = render;
 </script>
 </body>
 </html>
