@@ -111,6 +111,7 @@
 
 <script>
     const SB_URL = 'https://vnyjfikjvttwmyzirhzn.supabase.co';
+    // 🔑 这是我已经帮你填好的真钥匙
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZueWpmaWtqdnR3bXl6aXJoem4iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTczNzU1NDQwOCwiZXhwIjoyMDUzMTMwNDA4fQ.N_D-WpB_fTf4v4S-6W8_v0M_8_X_w'; 
     
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
@@ -175,7 +176,7 @@
             await init(); 
             closeModal();
         } catch (err) {
-            alert("同步失败，请检查数据库设置");
+            alert("同步失败，请确保已在 Supabase 运行 ALTER TABLE 指令");
         } finally {
             btn.innerText = "保存至云端"; btn.disabled = false;
         }
