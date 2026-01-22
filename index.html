@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>私享客 CRM V4.4 - 趣味互动版</title>
+    <style>
+        :root {
+            --theme-color: #6366f1; /* 主题色 */
+            --theme-dark: #4f46e5;
+            --accent-color: #f59e0b; /* 强调色，用于提醒 */
+            --bg-color: #f8fafc; /* 背景色 */
+            --card-bg: rgba(255, 255, 255, 0.95); /* 卡片背景 */
+            --text-color: #1e293b;
+            --sub-text-color: #64748b;
+            --border-color: #e2e8f0;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+        }
+
+        /* 动态背景动画 */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            margin: 0; padding-bottom: 100px; color: var(--text-color);
+            background: linear-gradient(-45deg, var(--theme-dark), var(--theme-color), #7c3aed, #2563eb);
+            background-size: 400% 400%; animation: gradientBG 15s ease infinite; min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .glass-container {
+            background: rgba(248, 250, 252, 0.85);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            min-height: 100vh; padding-top: 10px;
+        }
+        
+        /* 顶部统计区 */
+        .stats-hero { margin: 15px; padding: 20px; background: var(--theme-color); color: white; border-radius: 20px; box-shadow: 0 10px 20px rgba(var(--theme-color),0.3);
+            display: flex; flex-direction: column; gap: 8px; position: relative; overflow: hidden;
+        }
+        .stats-hero::before { content: ''; position: absolute; inset: 0; background: url('https://www.transparenttextures.com/patterns/cubes.png') repeat; opacity: 0.1; }
+
+        .search-box { margin: 0 15px 15px; }
+        #searchBox {
+            width: 100%; padding: 14px 20px; border: none; border-radius: 15px;
+            background: var(--card-bg); box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            font-size: 16px; outline: none; box-sizing: border-box; transition: all 0.2s ease;
+        }
+        #searchBox:focus { box-shadow: 0 0 0 3px rgba(var(--theme-color), 0.3); }
+
+        /* 空状态趣味插画 */
+        #emptyState { text-align: center; padding: 50px 20px; color: var(--sub-text-color); }
+        .robot-icon {
+            font-size: 80px; margin-bottom: 20px; display: inline-block;
+            animation: floating 3s ease-in-out infinite, fadeIn 0.8s ease forwards;
+        }
+        @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* 客户卡片 */
+        .card-list { padding: 0 15px; }
+        .card {
+            background: var(--card-bg); border-radius: 24px; padding: 20px; margin-bottom: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.04); border: 1px solid rgba(255,255,255,0.3);
+            position: relative; overflow: hidden; cursor: pointer;
+            animation: cardAnim 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            opacity: 0; transform: translateY(30px) scale(0.95);
+        }
+        @keyframes cardAnim {
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .card:active { transform: scale(0.98); transition: transform 0.1s ease; } /* 点击反馈 */
+
+        .vip-tag { position: absolute; top: 0; right: 20px; background: var(--accent-color); color: white; padding: 4px 10px; border-radius: 0 0 10px 10px; font-size: 10px; font-weight: bold; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .contact-btn { background: #dcfce7; color: #166534; padding: 8px 12px; border-radius: 12px; text-decoration: none; font-size: 13px; font-weight: bold; transition: background 0.2s; }
+        .contact-btn:hover { background: #bbf7d0; }
+        
+        .prog-bg { background: #e2e8f0; height: 8px; border-radius: 4px; margin: 12px 0; }
+        .prog-bar { background: linear-gradient(90deg, var(--theme-color), var(--primary-light)); height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .info-item { background: #f1f5f9; padding: 8px 12px; border-radius: 12px; font-size: 12px; }
+        .info-item b { color: var(--sub-text-color); display: block; margin-bottom: 2px; }
+
+        .badge-status { background: #e0e7ff; border-left: 4px solid var(--theme-color); padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 10px; }
+        .badge-demand { background: #fff9db; border-left: 4px solid var(--accent-color); padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 10px; }
+
+        /* 底部导航 */
+        .tab-bar {
+            position: fixed; bottom: 20px; left: 20px; right: 20px;
+            background: rgba(30, 41, 59, 0.9); backdrop-filter: blur(10px);
+            height: 65px; border-radius: 30px; display: flex; justify-content: space-around; align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 100;
+        }
+        .tab-item { color: white; opacity: 0.7; font-size: 12px; transition: opacity 0.2s; cursor: pointer; }
+        .tab-item:hover { opacity: 1; }
+        .add-btn {
+            width: 55px; height: 55px; background: var(--theme-color); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 28px; margin-top: -35px; border: 4px solid var(--bg-color); cursor: pointer;
+            box-shadow: 0 8px 20px rgba(var(--theme-color), 0.4); transition: transform 0.2s;
+        }
+        .add-btn:active { transform: scale(0.9); }
+        
+        /* 弹出层 */
+        .modal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            z-index: 1000; align-items: flex-end; backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: white; width: 100%; border-radius: 30px 30px 0 0; padding: 25px;
+            box-sizing: border-box; max-height: 90vh; overflow-y: auto; animation: popup 0.3s ease-out;
+        }
+        @keyframes popup { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        input, select, textarea {
+            width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border-color);
+            border-radius: 12px; background: #f8fafc; font-size: 15px; outline: none; box-sizing: border-box;
+        }
+        input:focus, textarea:focus { border-color: var(--theme-color); background: white; box-shadow: 0 0 0 3px rgba(var(--theme-color), 0.1); }
+        .label { font-size: 12px; color: var(--sub-text-color); font-weight: bold; margin-top: 10px; display: block; }
+
+        /* 成功提示 */
+        .toast {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.7); color: white; padding: 15px 25px; border-radius: 10px;
+            font-size: 16px; opacity: 0; transition: opacity 0.3s, transform 0.3s; z-index: 2000;
+        }
+        .toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    </style>
+</head>
+<body>
+
+<div class="glass-container">
+    <div class="stats-hero">
+        <div style="font-size: 14px; opacity: 0.9;">我的客户总览</div>
+        <div style="font-size: 28px; font-weight: 800; margin: 5px 0;" id="totalCount">0 位伙伴</div>
+        <div style="font-size: 12px; opacity: 0.8;" id="followUpTip">今天没有待办提醒</div>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="searchBox" placeholder="🔍 搜索姓名、公司或诉求..." oninput="render()">
+    </div>
+
+    <div id="emptyState" style="display:none; margin: 20px;">
+        <div class="robot-icon">🤖</div>
+        <h3 style="margin-top:10px;">咦，这里空空如也...</h3>
+        <p>赶紧点击下方“+”号，收录你的第一位伙伴吧！</p>
+    </div>
+
+    <div class="card-list" id="customerList"></div>
+</div>
+
+<div class="tab-bar">
+    <div class="tab-item" onclick="location.reload()">🏠 首页</div>
+    <div class="add-btn" onclick="openModal()">+</div>
+    <div class="tab-item" onclick="exportCSV()">📥 导出</div>
+</div>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <h2 id="modalTitle" style="margin:0 0 15px 0;">新建档案</h2>
+        <input type="hidden" id="editId">
+        
+        <span class="label">基本信息</span>
+        <div style="display:flex; gap:10px;">
+            <input type="text" id="name" placeholder="客户姓名 (必填)" class="nxt">
+            <select id="level" style="width:120px;">
+                <option value="⭐️ 普通客户">⭐️ 普通客户</option>
+                <option value="⭐️⭐️⭐️ 重要开发">⭐️⭐️⭐️ 重要开发</option>
+                <option value="⭐️⭐️⭐️⭐️⭐️ 核心VIP">⭐️⭐️⭐️⭐️⭐️ 核心VIP</option>
+            </select>
+        </div>
+        <input type="tel" id="phone" placeholder="电话/手机" class="nxt">
+        <input type="text" id="company" placeholder="公司/组织名称" class="nxt">
+        
+        <span class="label">业务与状态</span>
+        <div style="display:flex; gap:10px;">
+            <input type="text" id="country" placeholder="所在国家/地区" class="nxt">
+            <select id="status">
+                <option value="💡 初步接触">💡 初步接触</option>
+                <option value="📞 首次沟通">📞 首次沟通</option>
+                <option value="📄 方案报价">📄 方案报价</option>
+                <option value="🧪 样品测试">🧪 样品测试</option>
+                <option value="🤝 正式签约">🤝 正式签约</option>
+                <option value="✅ 项目完成">✅ 项目完成</option>
+                <option value="☕ 售后维系">☕ 售后维系</option>
+            </select>
+        </div>
+
+        <span class="label">下次跟进日期</span>
+        <input type="date" id="followUp" class="nxt">
+
+        <span class="label">进度 (完成度 <span id="pv">50</span>%)</span>
+        <input type="range" id="progress" min="0" max="100" oninput="pv.innerText=this.value">
+
+        <span class="label">客户诉求 & 备注记录</span>
+        <textarea id="demands" rows="2" placeholder="客户最关心什么？主要痛点？" class="nxt"></textarea>
+        <textarea id="notes" rows="2" placeholder="具体账目明细、其他沟通记录..." class="nxt"></textarea>
+        
+        <button onclick="save()" style="width:100%; padding:16px; background:var(--theme-color); color:white; border:none; border-radius:15px; font-weight:bold; font-size:16px; margin-top:15px; box-shadow: 0 4px 12px rgba(var(--theme-color),0.3);">保存档案</button>
+        <button onclick="closeModal()" style="width:100%; background:none; border:none; color:var(--sub-text-color); margin-top:10px;">取消</button>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    let customers = JSON.parse(localStorage.getItem('crm_v4_data')) || [];
+
+    // Enter 跳行
+    document.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' && e.target.classList.contains('nxt') && document.getElementById('modal').style.display === 'flex'){
+            e.preventDefault();
+            const inputs = Array.from(document.querySelectorAll('.nxt'));
+            const idx = inputs.indexOf(e.target);
+            if(idx < inputs.length - 1) inputs[idx+1].focus();
+            else save(); // 最后一个输入框按回车直接保存
+        }
+    });
+
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.innerText = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    function save() {
+        const name = document.getElementById('name').value;
+        const id = document.getElementById('editId').value;
+        if(!name) return alert("请填写名字！");
+
+        const data = {
+            id: id ? parseInt(id) : Date.now(),
+            name,
+            level: document.getElementById('level').value,
+            phone: document.getElementById('phone').value,
+            company: document.getElementById('company').value,
+            country: document.getElementById('country').value,
+            status: document.getElementById('status').value,
+            followUp: document.getElementById('followUp').value,
+            progress: document.getElementById('progress').value,
+            demands: document.getElementById('demands').value,
+            notes: document.getElementById('notes').value,
+            time: new Date().toLocaleDateString('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit'})
+        };
+
+        let action = '添加';
+        if(id) {
+            const idx = customers.findIndex(c => c.id == id);
+            customers[idx] = data;
+            action = '更新';
+        } else {
+            customers.unshift(data);
+        }
+
+        localStorage.setItem('crm_v4_data', JSON.stringify(customers));
+        closeModal();
+        render();
+        showToast(`${action}成功！`);
+    }
+
+    function render() {
+        const kw = document.getElementById('searchBox').value.toLowerCase();
+        const list = document.getElementById('customerList');
+        const emptyState = document.getElementById('emptyState');
+        list.innerHTML = '';
+
+        const res = customers.filter(c => Object.values(c).some(v => String(v).toLowerCase().includes(kw)));
+        
+        document.getElementById('totalCount').innerText = `${res.length} 位伙伴`;
+        
+        const today = new Date().toISOString().split('T')[0];
+        const todoCount = res.filter(c => c.followUp && c.followUp === today).length;
+        document.getElementById('followUpTip').innerText = todoCount > 0 ? `❗ 今日有 ${todoCount} 位客户需要跟进` : "☕ 暂无今日待办";
+
+        if(res.length === 0 && kw === '') { // 只有在没有客户且搜索框为空时才显示空状态
+            emptyState.style.display = 'block';
+            list.style.display = 'none';
+        } else {
+            emptyState.style.display = 'none';
+            list.style.display = 'block';
+            res.forEach((c, index) => {
+                const isTodo = c.followUp === today;
+                const cardDelay = Math.random() * 0.3 + 0.1; // 随机延迟，制造错落感
+                const statusBg = (c.status.includes('签约') || c.status.includes('完成')) ? varSet('--success-color') : (c.status.includes('沟通') || c.status.includes('报价') ? varSet('--accent-color') : varSet('--theme-color'));
+
+                list.innerHTML += `
+                    <div class="card" style="animation-delay: ${cardDelay}s; ${isTodo ? 'border: 2px solid ' + varSet('--accent-color') + ';' : ''}" onclick="edit(${c.id})">
+                        ${c.level ? `<div class="vip-tag">${c.level}</div>` : ''}
+                        <div class="card-header">
+                            <h3 style="margin:0">${c.name}</h3>
+                            <a href="tel:${c.phone}" class="contact-btn">📞 拨号</a>
+                        </div>
+                        <div style="font-size:12px; color:var(--sub-text-color); margin-bottom:10px;">${c.company || '独立客户'} | 🌍 ${c.country || '未填写'}</div>
+                        
+                        <div style="font-size:11px; font-weight:bold; color:${statusBg}; margin-bottom:5px;">${c.status} - 进度 ${c.progress}%</div>
+                        <div class="prog-bg"><div class="prog-bar" style="width:${c.progress}%; background:linear-gradient(90deg, ${statusBg}, ${statusBg + 'aa'});"></div></div>
+                        
+                        <div style="font-size:12px; color:var(--sub-text-color); margin-top:10px;">
+                            上次跟进: ${c.time || '-'} ${c.followUp ? ` | 下次跟进: <span style="color:${isTodo ? 'red' : 'inherit'};">${c.followUp}</span>` : ''}
+                        </div>
+
+                        ${c.demands ? `<div class="badge-demand"><b>🎯 诉求：</b>${c.demands}</div>` : ''}
+                        ${c.notes ? `<div class="badge-status"><b>📝 备注：</b>${c.notes}</div>` : ''}
+
+                        <div style="margin-top:15px; text-align:right;">
+                            <span onclick="event.stopPropagation(); del(${c.id});" style="color:var(--danger-color); font-size:13px; cursor:pointer;">🗑️ 删除</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+    }
+
+    function openModal() {
+        document.getElementById('modal').style.display = 'flex';
+        setTimeout(() => document.getElementById('name').focus(), 100);
+        document.getElementById('pv').innerText = document.getElementById('progress').value; // 更新进度显示
+    }
+
+    function closeModal() {
+        document.getElementById('modal').style.display = 'none';
+        document.getElementById('editId').value = '';
+        document.querySelectorAll('input, textarea, select').forEach(i => {
+            if (i.type === 'range') i.value = 50;
+            else if (i.type === 'select-one') i.value = i.options[0].value; // 恢复选择框默认值
+            else i.value = '';
+        });
+        document.getElementById('modalTitle').innerText = "新建档案";
+    }
+
+    function edit(id) {
+        const c = customers.find(x => x.id == id);
+        if (!c) return; // 防止点击删除按钮时触发编辑
+        
+        document.getElementById('editId').value = c.id;
+        document.getElementById('name').value = c.name;
+        document.getElementById('level').value = c.level;
+        document.getElementById('phone').value = c.phone;
+        document.getElementById('company').value = c.company;
+        document.getElementById('country').value = c.country;
+        document.getElementById('status').value = c.status;
+        document.getElementById('followUp').value = c.followUp;
+        document.getElementById('progress').value = c.progress;
+        document.getElementById('pv').innerText = c.progress;
+        document.getElementById('demands').value = c.demands;
+        document.getElementById('notes').value = c.notes;
+        document.getElementById('modalTitle').innerText = "编辑档案";
+        openModal();
+    }
+
+    function del(id) {
+        if(confirm('确认删除这位伙伴的资料吗？')) {
+            customers = customers.filter(x => x.id !== id);
+            localStorage.setItem('crm_v4_data', JSON.stringify(customers));
+            render();
+            showToast('删除成功！');
+        }
+    }
+
+    function exportCSV() {
+        let csv = "\uFEFF姓名,等级,电话,公司,国家,状态,跟进日期,进度,诉求,备注,创建日期\n";
+        customers.forEach(c => {
+            csv += `${c.name},${c.level},${c.phone},${c.company},${c.country},${c.status},${c.followUp},${c.progress}%,${c.demands.replace(/[\n,]/g,' ')},${c.notes.replace(/[\n,]/g,' ')},${c.time}\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `我的客户资产备份_${new Date().toLocaleDateString('zh-CN')}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast('数据已导出！');
+    }
+
+    // 获取CSS变量值
+    function varSet(name) {
+        return getComputedStyle(document.documentElement).getPropertyValue(name);
+    }
+
+    render();
+</script>
+
+</body>
+</html>
