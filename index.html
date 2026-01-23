@@ -12,17 +12,16 @@
             --dark: #0f172a; --primary: #2563eb; --bg: #f8fafc;
             --surface: #ffffff; --text-sub: #64748b;
         }
-
         body { font-family: 'PingFang SC', sans-serif; background: var(--bg); margin: 0; color: var(--dark); padding-bottom: 110px; }
 
-        /* --- 头部 --- */
+        /* 列表头部样式 */
         .hero {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             padding: 50px 25px 80px; color: white; border-bottom-left-radius: 50px; border-bottom-right-radius: 50px;
         }
         .hero-num { font-size: 65px; font-weight: 900; letter-spacing: -2px; }
 
-        /* --- 搜索与列表 --- */
+        /* 搜索框 */
         .search-area { margin: -40px 20px 20px; position: relative; z-index: 10; }
         #searchBox {
             width: 100%; padding: 20px 25px 20px 60px; border: none; border-radius: 25px;
@@ -30,32 +29,23 @@
         }
         .search-icon { position: absolute; left: 25px; top: 50%; transform: translateY(-50%); color: var(--primary); }
 
-        /* --- 决策卡片 --- */
+        /* 客户卡片 */
         .card {
             background: white; margin: 0 16px 18px; padding: 22px; border-radius: 35px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.03); position: relative;
         }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .name { font-size: 24px; font-weight: 900; }
-        .cust-id { font-size: 10px; font-family: monospace; background: #f1f5f9; padding: 2px 8px; border-radius: 5px; color: var(--text-sub); }
-        .time-tag { font-size: 11px; color: var(--primary); font-weight: 800; background: #eff6ff; padding: 4px 10px; border-radius: 10px; }
-        
-        .org-info { font-size: 14px; color: var(--text-sub); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
-        .memo-box { background: #f1f5f9; padding: 18px; border-radius: 20px; font-size: 14px; line-height: 1.6; border-left: 4px solid var(--primary); }
+        .cust-id-tag { font-size: 10px; font-family: monospace; background: #f1f5f9; padding: 2px 8px; border-radius: 5px; color: var(--text-sub); }
+        .memo-preview { background: #f1f5f9; padding: 15px; border-radius: 15px; font-size: 13px; margin-top: 12px; color: #475569; border-left: 3px solid var(--primary); }
 
-        /* --- 视图管理 --- */
-        .page-view { display: none; padding: 20px; }
-        .page-view.active { display: block; }
-
-        /* --- 详情页面 --- */
+        /* 详情页布局 */
         .detail-card { background: white; border-radius: 40px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
-        .action-row { display: flex; gap: 12px; margin-bottom: 25px; }
-        .action-btn { flex: 1; padding: 18px; border-radius: 20px; text-align: center; font-weight: 800; text-decoration: none; font-size: 14px; }
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
         .info-item { font-size: 13px; color: var(--text-sub); }
         .info-item b { color: var(--dark); display: block; margin-bottom: 2px; }
 
-        /* --- 底部导航 --- */
+        /* 底部导航 */
         .tab-bar {
             position: fixed; bottom: 0; width: 100%; height: 95px; background: rgba(255,255,255,0.95);
             backdrop-filter: blur(20px); display: flex; align-items: center; z-index: 1000; border-top: 1px solid #eee;
@@ -65,15 +55,16 @@
         .tab-item i { font-size: 24px; margin-bottom: 4px; display: block; }
         .add-btn { width: 65px; height: 65px; background: var(--primary); color: white; border-radius: 22px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-top: -45px; border: 6px solid var(--bg); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3); }
 
-        /* --- 表单弹窗 --- */
+        /* 弹窗表单 */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; z-index: 2000; align-items: flex-end; }
         .modal-content { background: white; width: 100%; border-radius: 45px 45px 0 0; padding: 30px; max-height: 90vh; overflow-y: auto; box-sizing: border-box; }
         .input-group { margin-bottom: 12px; }
-        .input-group label { display: block; font-size: 11px; font-weight: 900; color: var(--text-sub); margin-bottom: 4px; margin-left: 5px; }
-        .input { width: 100%; padding: 14px; border: 2px solid #f1f5f9; border-radius: 15px; background: #f8fafc; box-sizing: border-box; font-size: 15px; font-weight: 600; outline: none; }
-        .input:focus { border-color: var(--primary); background: white; }
+        .input { width: 100%; padding: 14px; border: 2px solid #f1f5f9; border-radius: 15px; background: #f8fafc; box-sizing: border-box; font-size: 15px; outline: none; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .save-btn { width: 100%; padding: 20px; background: var(--dark); color: white; border: none; border-radius: 22px; font-weight: 900; font-size: 17px; margin-top: 15px; }
+        .save-btn { width: 100%; padding: 20px; background: #0f172a; color: white; border: none; border-radius: 22px; font-weight: 900; font-size: 17px; margin-top: 15px; }
+        
+        .page-view { display: none; padding: 20px; }
+        .page-view.active { display: block; }
     </style>
 </head>
 <body>
@@ -82,7 +73,7 @@
     <div class="hero">
         <div style="opacity:0.5; font-size:10px; letter-spacing:3px;">TACTICAL ASSETS</div>
         <div class="hero-num" id="totalCount">0</div>
-        <div style="font-weight:700;">位核心资源正在纵横中</div>
+        <div style="font-weight:700;">位核心资源已入库</div>
     </div>
     <div class="search-area">
         <i class="fa-solid fa-search search-icon"></i>
@@ -108,152 +99,188 @@
 
 <div class="tab-bar">
     <div class="tab-item active" id="tab-list" onclick="switchTab('list')"><i class="fa-solid fa-layer-group"></i><span>中枢</span></div>
-    <div class="tab-item" id="tab-ai" onclick="switchTab('ai')"><i class="fa-solid fa-bolt"></i><span>军师</span></div>
+    <div class="tab-item" id="tab-ai" onclick="switchTab('ai')"><i class="fa-solid fa-brain"></i><span>军师</span></div>
     <div class="add-btn" onclick="openForm()"><i class="fa-solid fa-plus"></i></div>
-    <div class="tab-item" id="tab-stats" onclick="switchTab('stats')"><i class="fa-solid fa-chart-line"></i><span>穿透</span></div>
-    <div class="tab-item" onclick="syncData()"><i class="fa-solid fa-fingerprint"></i><span>同步</span></div>
+    <div class="tab-item" id="tab-stats" onclick="switchTab('stats')"><i class="fa-solid fa-chart-pie"></i><span>穿透</span></div>
+    <div class="tab-item" onclick="syncData()"><i class="fa-solid fa-cloud-arrow-up"></i><span>同步</span></div>
 </div>
 
 <div class="modal" id="modal">
     <div class="modal-content">
         <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
             <h2 style="margin:0; font-weight:900;">档案维护</h2>
-            <i class="fa-solid fa-circle-xmark" onclick="closeForm()" style="font-size:28px; color:#ddd;"></i>
+            <i class="fa-solid fa-times" onclick="closeForm()" style="font-size:24px;"></i>
         </div>
         <input type="hidden" id="editId">
+        
         <div class="input-group">
-            <label>客户编号 (系统自动生成)</label>
-            <input type="text" id="cust_id" class="input" readonly style="background:#eee; color:#888;">
+            <label style="font-size:11px; font-weight:900; color:var(--text-sub);">客户编号 (自动生成)</label>
+            <input type="text" id="cust_id" class="input" readonly style="background:#eee;">
         </div>
+
         <div class="grid">
-            <div class="input-group"><label>姓名</label><input type="text" id="name" class="input"></div>
-            <div class="input-group"><label>级别</label><select id="level" class="input"><option>⭐</option><option>⭐⭐⭐</option><option>⭐⭐⭐⭐⭐</option></select></div>
+            <input type="text" id="name" class="input" placeholder="姓名">
+            <select id="gender" class="input"><option>🚹 男</option><option>🚺 女</option></select>
         </div>
+
+        <div class="grid" style="margin-top:10px;">
+            <select id="level" class="input"><option>⭐</option><option>⭐⭐⭐</option><option>⭐⭐⭐⭐⭐</option></select>
+            <select id="status" class="input"><option>💡 初步接触</option><option>🤝 正式签约</option><option>⏸️ 暂时搁置</option></select>
+        </div>
+
+        <div class="input-group" style="margin-top:10px;">
+            <input type="text" id="company" class="input" placeholder="公司 / 机构名称">
+        </div>
+
         <div class="grid">
-            <div class="input-group"><label>状态</label><select id="status" class="input"><option>💡 初步接触</option><option>🤝 正式签约</option><option>⏸️ 暂时搁置</option></select></div>
-            <div class="input-group"><label>性别</label><select id="gender" class="input"><option>🚹 男</option><option>🚺 女</option></select></div>
+            <input type="text" id="job" class="input" placeholder="职务">
+            <input type="tel" id="phone" class="input" placeholder="联系电话">
         </div>
-        <div class="grid">
-            <div class="input-group"><label>机构/公司</label><input type="text" id="company" class="input"></div>
-            <div class="input-group"><label>职务</label><input type="text" id="job" class="input"></div>
+
+        <div class="input-group" style="margin-top:10px;">
+            <input type="text" id="wechat" class="input" placeholder="微信账号">
         </div>
-        <div class="grid">
-            <div class="input-group"><label>电话</label><input type="tel" id="phone" class="input"></div>
-            <div class="input-group"><label>微信</label><input type="text" id="wechat" class="input"></div>
+
+        <div class="input-group">
+            <input type="email" id="email" class="input" placeholder="电子邮箱 (Email)">
         </div>
-        <div class="input-group"><label>邮箱 (Business Email)</label><input type="email" id="email" class="input" placeholder="example@office.com"></div>
-        <div class="input-group"><label>地址 / 地区</label><input type="text" id="address" class="input" placeholder="例：上海市浦东新区..."></div>
-        <div class="grid">
-            <div class="input-group"><label>来源</label><input type="text" id="source" class="input"></div>
-            <div class="input-group"><label>生日</label><input type="date" id="birthday" class="input"></div>
+
+        <div class="input-group">
+            <input type="text" id="address" class="input" placeholder="办公地址 / 地区">
         </div>
-        <div class="input-group"><label>决策备忘 (核心痛点 / 利益关系)</label><textarea id="demands" rows="3" class="input"></textarea></div>
-        <button class="save-btn" onclick="saveData()">确 认 同 步</button>
-        <button id="delBtn" onclick="deleteRecord()" style="width:100%; background:none; border:none; color:red; margin-top:15px; font-weight:800; display:none;">彻底移除此档案</button>
+
+        <textarea id="demands" rows="4" class="input" placeholder="核心备忘：痛点、利益分配、谈判重点..." style="margin-top:10px;"></textarea>
+
+        <button class="save-btn" onclick="saveData()">同步至决策云端</button>
+        <button id="delBtn" onclick="deleteRecord()" style="width:100%; background:none; border:none; color:red; margin-top:15px; font-weight:800; display:none;">彻底抹除此记录</button>
     </div>
 </div>
 
 <script>
+    // 配置 Supabase (请确保你的 Key 正确)
     const SB_URL = 'https://vnyjfikjvttwmyzirhzn.supabase.co';
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZueWpmaWtqdnR0d215emlyaHpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNzE0NTgsImV4cCI6MjA4NDY0NzQ1OH0.SFi8Ze98-Qf0M42BupJjwsiqOxYrdauzRjjt3no7_38';
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
+    
     let customers = [];
     let myChart = null;
 
+    // 初始化：拉取数据
     async function init() {
-        const { data } = await supabaseClient.from('customers').select('*').order('created_at', { ascending: false });
+        const { data, error } = await supabaseClient.from('customers').select('*').order('created_at', { ascending: false });
+        if (error) console.error("读取失败:", error);
         customers = data || [];
         renderList();
     }
 
+    // 切换页面
     function switchTab(view) {
         document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
         document.getElementById('view-' + view).classList.add('active');
         if(document.getElementById('tab-' + view)) document.getElementById('tab-' + view).classList.add('active');
+        
         if(view === 'ai') renderAI();
         if(view === 'stats') renderChart();
     }
 
+    // 渲染主列表
     function renderList() {
         const kw = document.getElementById('searchBox').value.toLowerCase();
         const container = document.getElementById('listContainer');
         container.innerHTML = '';
-        const list = customers.filter(c => Object.values(c).some(v => String(v).toLowerCase().includes(kw)));
+        
+        const list = customers.filter(c => 
+            (c.name && c.name.toLowerCase().includes(kw)) || 
+            (c.demands && c.demands.toLowerCase().includes(kw)) ||
+            (c.address && c.address.toLowerCase().includes(kw)) ||
+            (c.cust_id && c.cust_id.toLowerCase().includes(kw))
+        );
+
         document.getElementById('totalCount').innerText = list.length;
 
         list.forEach(c => {
-            const diffDays = Math.floor((new Date() - new Date(c.created_at)) / (1000 * 60 * 60 * 24));
             const div = document.createElement('div');
             div.className = 'card';
             div.onclick = () => showDetail(c.id);
             div.innerHTML = `
                 <div class="card-header">
-                    <span class="name">${c.name} ${c.gender.includes('女') ? '👩‍💼' : '👨‍💼'}</span>
-                    <span class="cust-id">${c.cust_id || 'NO-ID'}</span>
+                    <span class="name">${c.name} ${c.gender === '🚺 女' ? '👩‍💼' : '👨‍💼'}</span>
+                    <span class="cust-id-tag">${c.cust_id || '新资源'}</span>
                 </div>
-                <div class="org-info"><i class="fa-solid fa-location-dot"></i> ${c.address ? c.address.substring(0,10) : '未设地区'} | ${c.job || '负责人'}</div>
-                <div class="memo-box">${c.demands ? c.demands.substring(0, 35) + '...' : '点击完善决策备忘录'}</div>
-                <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
-                    <div style="display:flex; gap:6px;">
-                        <span style="font-size:10px; padding:3px 8px; background:#fef3c7; color:#92400e; border-radius:5px; font-weight:800;">${c.status}</span>
-                        <span style="font-size:10px; padding:3px 8px; background:#e0f2fe; color:#0369a1; border-radius:5px; font-weight:800;">${c.level}</span>
-                    </div>
-                    <span class="time-tag">${diffDays === 0 ? '今日更新' : diffDays + ' 天前'}</span>
-                </div>
+                <div style="font-size:13px; color:var(--text-sub);"><i class="fa-solid fa-briefcase"></i> ${c.company || '个人'} · ${c.job || '负责人'}</div>
+                ${c.address ? `<div style="font-size:11px; color:var(--primary); margin-top:5px;"><i class="fa-solid fa-location-dot"></i> ${c.address}</div>` : ''}
+                <div class="memo-preview">${c.demands ? c.demands.substring(0, 40) + '...' : '暂无备忘情报'}</div>
             `;
             container.appendChild(div);
         });
     }
 
+    // 显示详情
     function showDetail(id) {
         const c = customers.find(x => x.id == id);
         switchTab('detail');
         document.getElementById('detailContainer').innerHTML = `
             <div class="detail-card">
-                <div style="text-align:center; margin-bottom:25px;">
-                    <div style="font-size:12px; color:var(--text-sub); margin-bottom:5px;">编号: ${c.cust_id}</div>
-                    <h2 style="font-size:32px; margin:0;">${c.name}</h2>
-                    <div style="color:var(--primary); font-weight:800; margin-top:5px;">${c.company} · ${c.job}</div>
+                <div style="text-align:center; margin-bottom:20px;">
+                    <div style="font-size:11px; color:var(--text-sub);">编号: ${c.cust_id || '未分配'}</div>
+                    <h2 style="font-size:35px; margin:5px 0;">${c.name}</h2>
+                    <div style="color:var(--primary); font-weight:800;">${c.company} · ${c.job}</div>
                 </div>
-                <div class="action-row">
-                    <a href="tel:${c.phone}" class="action-btn" style="background:#2563eb; color:white;"><i class="fa-solid fa-phone"></i> 拨号</a>
-                    <div onclick="openForm(${c.id})" class="action-btn" style="background:#f8fafc; color:var(--dark); border:1px solid #eee;"><i class="fa-solid fa-pen"></i> 编辑</div>
+                
+                <div style="display:flex; gap:10px; margin-bottom:25px;">
+                    <a href="tel:${c.phone}" style="flex:1; background:var(--primary); color:white; padding:18px; border-radius:20px; text-align:center; text-decoration:none; font-weight:900;"><i class="fa-solid fa-phone"></i> 立即拨号</a>
+                    <div onclick="openForm(${c.id})" style="flex:1; background:#f1f5f9; padding:18px; border-radius:20px; text-align:center; font-weight:900;"><i class="fa-solid fa-edit"></i> 编辑档案</div>
                 </div>
-                <div style="background:#f8fafc; padding:20px; border-radius:20px; margin-bottom:20px;">
-                    <div style="font-size:11px; font-weight:900; color:#94a3b8; margin-bottom:8px;">CORE MEMO (决策情报)</div>
-                    <div style="line-height:1.7; white-space:pre-wrap;">${c.demands || '无记录'}</div>
+
+                <div style="background:#f8fafc; padding:20px; border-radius:25px;">
+                    <div style="font-size:11px; font-weight:900; color:#94a3b8; margin-bottom:10px;">CORE MEMO / 决策备忘</div>
+                    <div style="line-height:1.6; white-space:pre-wrap;">${c.demands || '暂无情报录入'}</div>
                 </div>
+
                 <div class="info-grid">
-                    <div class="info-item"><b>微信</b>${c.wechat || '-'}</div>
-                    <div class="info-item"><b>邮箱</b>${c.email || '-'}</div>
-                    <div class="info-item"><b>地区/地址</b>${c.address || '-'}</div>
-                    <div class="info-item"><b>来源</b>${c.source || '-'}</div>
-                    <div class="info-item"><b>生日</b>${c.birthday || '-'}</div>
-                    <div class="info-item"><b>级别</b>${c.level}</div>
+                    <div class="info-item"><b>微信号</b>${c.wechat || '-'}</div>
+                    <div class="info-item"><b>电子邮箱</b>${c.email || '-'}</div>
+                    <div class="info-item"><b>办公地址</b>${c.address || '-'}</div>
+                    <div class="info-item"><b>当前状态</b>${c.status}</div>
                 </div>
             </div>
         `;
     }
 
+    // 打开表单 (包含自动生成编号逻辑)
     function openForm(id = null) {
         document.getElementById('editId').value = id || '';
         document.getElementById('delBtn').style.display = id ? 'block' : 'none';
+        
         if(id) {
             const c = customers.find(x => x.id == id);
-            ['cust_id','name','gender','level','status','company','job','phone','wechat','email','address','source','birthday','demands'].forEach(k => {
-                document.getElementById(k).value = c[k] || '';
-            });
+            document.getElementById('cust_id').value = c.cust_id || '';
+            document.getElementById('name').value = c.name || '';
+            document.getElementById('gender').value = c.gender || '🚹 男';
+            document.getElementById('level').value = c.level || '⭐';
+            document.getElementById('status').value = c.status || '💡 初步接触';
+            document.getElementById('company').value = c.company || '';
+            document.getElementById('job').value = c.job || '';
+            document.getElementById('phone').value = c.phone || '';
+            document.getElementById('wechat').value = c.wechat || '';
+            document.getElementById('email').value = c.email || '';
+            document.getElementById('address').value = c.address || '';
+            document.getElementById('demands').value = c.demands || '';
         } else {
+            // 新增时自动生成 ID
             document.querySelectorAll('.input').forEach(i => i.value = '');
-            // 自动生成编号
             document.getElementById('cust_id').value = 'ID-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+            document.getElementById('gender').value = '🚹 男';
+            document.getElementById('level').value = '⭐';
+            document.getElementById('status').value = '💡 初步接触';
         }
         document.getElementById('modal').style.display = 'flex';
     }
 
     function closeForm() { document.getElementById('modal').style.display = 'none'; }
 
+    // 保存数据 (核心修复：确保字段对应)
     async function saveData() {
         const row = {
             cust_id: document.getElementById('cust_id').value,
@@ -267,40 +294,56 @@
             wechat: document.getElementById('wechat').value,
             email: document.getElementById('email').value,
             address: document.getElementById('address').value,
-            source: document.getElementById('source').value,
-            birthday: document.getElementById('birthday').value,
             demands: document.getElementById('demands').value
         };
+
         const id = document.getElementById('editId').value;
-        if(id) await supabaseClient.from('customers').update(row).eq('id', id);
-        else await supabaseClient.from('customers').insert([row]);
-        await init(); closeForm(); switchTab('list');
+        try {
+            if(id) await supabaseClient.from('customers').update(row).eq('id', id);
+            else await supabaseClient.from('customers').insert([row]);
+            
+            alert("同步成功！");
+            await init(); 
+            closeForm(); 
+            switchTab('list');
+        } catch (e) {
+            alert("同步失败，请检查数据库字段！");
+        }
     }
 
+    // 辅助功能：AI军师
     function renderAI() {
-        const container = document.getElementById('aiContainer'); container.innerHTML = '';
-        customers.slice(0, 5).forEach(c => {
+        const container = document.getElementById('aiContainer');
+        container.innerHTML = '';
+        customers.slice(0, 3).forEach(c => {
             const div = document.createElement('div');
-            div.style = "background:white; padding:20px; border-radius:25px; margin-bottom:15px; border-left:6px solid #1e293b;";
-            div.innerHTML = `<div style="font-weight:900; color:var(--primary);">策略针对: ${c.name}</div><div style="font-size:14px; margin-top:5px;">建议针对其所在的<b>${c.address || '该地区'}</b>进行一次资源摸排。</div>`;
+            div.style = "background:white; padding:20px; border-radius:25px; margin-bottom:15px; border-left:5px solid var(--primary);";
+            div.innerHTML = `<div style="font-weight:900;">针对 [${c.name}] 的攻坚建议：</div>
+                             <p style="font-size:14px; color:#666;">根据其地址 ${c.address || '未知'}，建议匹配当地资源进行破冰。</p>`;
             container.appendChild(div);
         });
     }
 
+    // 辅助功能：穿透图表
     function renderChart() {
-        const stats = {}; customers.forEach(c => stats[c.status] = (stats[c.status] || 0) + 1);
+        const stats = {}; 
+        customers.forEach(c => stats[c.status] = (stats[c.status] || 0) + 1);
         const ctx = document.getElementById('statChart').getContext('2d');
         if(myChart) myChart.destroy();
         myChart = new Chart(ctx, {
             type: 'doughnut',
-            data: { labels: Object.keys(stats), datasets: [{ data: Object.values(stats), backgroundColor: ['#2563eb','#f59e0b','#10b981','#ef4444'], borderWidth: 0 }] },
+            data: { 
+                labels: Object.keys(stats), 
+                datasets: [{ data: Object.values(stats), backgroundColor: ['#2563eb','#f59e0b','#10b981','#ef4444'], borderWidth: 0 }] 
+            },
             options: { cutout: '70%', plugins: { legend: { position: 'bottom' } } }
         });
     }
 
-    async function deleteRecord() { if(confirm("抹除档案不可恢复，确认？")) { await supabaseClient.from('customers').delete().eq('id', document.getElementById('editId').value); await init(); closeForm(); switchTab('list'); } }
-    function syncData() { alert("决策系统已完成同步。"); }
+    async function deleteRecord() { if(confirm("彻底抹除？")) { await supabaseClient.from('customers').delete().eq('id', document.getElementById('editId').value); await init(); closeForm(); switchTab('list'); } }
+    function syncData() { init(); alert("云端数据已刷新"); }
 
+    // 启动
     init();
 </script>
 </body>
