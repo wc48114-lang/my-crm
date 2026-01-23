@@ -193,7 +193,7 @@
             div.innerHTML = `
                 <div class="card-header">
                     <span class="name">${c.name} ${c.gender && c.gender.includes('女') ? '👩‍💼' : '👨‍💼'}</span>
-                    <span class="cust-id-tag">${c.cust_id || 'C-NEW'}</span>
+                    <span class="cust-id-tag">${c.cust_id || 'ID-NEW'}</span>
                 </div>
                 <div class="org-info"><i class="fa-solid fa-briefcase"></i> ${c.company} · ${c.job}</div>
                 ${c.address ? `<div style="font-size:11px; color:var(--primary); margin-bottom:8px;"><i class="fa-solid fa-location-dot"></i> ${c.address}</div>` : ''}
@@ -209,7 +209,7 @@
         document.getElementById('detailContainer').innerHTML = `
             <div class="detail-card">
                 <div style="text-align:center; margin-bottom:25px;">
-                    <div style="font-size:11px; color:var(--text-sub);">序列号: ${c.cust_id || '待补全'}</div>
+                    <div style="font-size:11px; color:var(--text-sub);">序列号: ${c.cust_id || '待分配'}</div>
                     <h2 style="font-size:32px; margin:5px 0;">${c.name}</h2>
                     <div style="color:var(--primary); font-weight:800;">${c.company} · ${c.job}</div>
                 </div>
@@ -243,16 +243,12 @@
                 const el = document.getElementById(f);
                 if(el) el.value = c[f] || '';
             });
-            // 如果老数据没序列号，打开编辑时也预设一个
-            if(!document.getElementById('cust_id').value) {
-                document.getElementById('cust_id').value = 'C' + Date.now().toString().slice(-6);
-            }
         } else {
             document.querySelectorAll('.input').forEach(i => i.value = '');
             document.getElementById('gender').value = '🚹 男';
             document.getElementById('level').value = '⭐⭐⭐⭐⭐';
             document.getElementById('status').value = '💡 初步接触';
-            document.getElementById('cust_id').value = 'C' + Date.now().toString().slice(-6);
+            document.getElementById('cust_id').value = '保存后自动分配序列号 (a1-z100)';
         }
         document.getElementById('modal').style.display = 'flex';
     }
@@ -260,8 +256,9 @@
     function closeForm() { document.getElementById('modal').style.display = 'none'; }
 
     async function saveData() {
+        const id = document.getElementById('editId').value;
         const row = {
-            cust_id: document.getElementById('cust_id').value || ('C' + Date.now().toString().slice(-6)),
+            // 【关键修改】如果是新增数据，不传 cust_id，让后台触发器生成 a1, a2...
             name: document.getElementById('name').value,
             gender: document.getElementById('gender').value,
             level: document.getElementById('level').value,
@@ -276,12 +273,17 @@
             birthday: document.getElementById('birthday').value,
             demands: document.getElementById('demands').value
         };
+
+        // 如果是编辑已有数据，保持原有的 cust_id 不变
+        if(id) {
+            row.cust_id = document.getElementById('cust_id').value;
+        }
+
         if(!row.name) { alert("姓名不能为空"); return; }
         
-        const id = document.getElementById('editId').value;
         const { error } = id ? await supabaseClient.from('customers').update(row).eq('id', id) : await supabaseClient.from('customers').insert([row]);
         if(!error) { alert("同步成功！"); await init(); closeForm(); switchTab('list'); }
-        else { alert("同步失败，请确保后台字段正确！"); console.error(error); }
+        else { alert("同步失败，请确保后台规则已配置！"); console.error(error); }
     }
 
     function renderAI() {
