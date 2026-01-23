@@ -13,161 +13,165 @@
             --brand-dark: #0f172a;
             --bg-base: #f1f5f9;
             --surface: #ffffff;
-            --text-heading: #0f172a;
-            --text-muted: #94a3b8;
+            --text-heading: #1e293b;
+            --text-muted: #64748b;
         }
 
-        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-base); margin: 0; padding-bottom: 120px; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-base); margin: 0; padding-bottom: 120px; overflow-x: hidden; }
 
         /* 顶部 Header */
         .app-header {
             background: var(--brand-dark);
-            padding: 60px 24px 40px;
+            padding: 50px 24px 40px;
             color: white;
             border-bottom-left-radius: 40px;
             border-bottom-right-radius: 40px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        .stats-count { font-size: 48px; font-weight: 900; }
+        .stats-count { font-size: 44px; font-weight: 900; line-height: 1; margin: 10px 0; }
 
         /* 搜索框 */
-        .search-container { margin: -30px 20px 20px; position: relative; z-index: 50; }
+        .search-container { margin: -25px 20px 20px; position: relative; z-index: 50; }
         #searchBox {
-            width: 100%; padding: 18px 24px 18px 55px; border: none; border-radius: 24px;
-            background: var(--surface); box-shadow: 0 10px 25px rgba(0,0,0,0.05); font-size: 16px; box-sizing: border-box;
+            width: 100%; padding: 16px 20px 16px 50px; border: none; border-radius: 20px;
+            background: var(--surface); box-shadow: 0 10px 25px rgba(0,0,0,0.05); font-size: 15px; box-sizing: border-box; outline: none;
         }
-        .search-icon { position: absolute; left: 22px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 
         /* 客户卡片 */
         .customer-card {
-            background: var(--surface); margin: 0 16px 16px; padding: 24px; border-radius: 28px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: 0.2s;
+            background: var(--surface); margin: 0 16px 12px; padding: 20px; border-radius: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.01); transition: 0.2s; position: relative;
         }
-        .customer-card:active { transform: scale(0.97); }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .client-name { font-size: 20px; font-weight: 700; color: var(--text-heading); }
-        .memo-preview { background: #f8fafc; padding: 15px; border-radius: 18px; font-size: 13px; color: #64748b; border-left: 4px solid #e2e8f0; }
+        .customer-card:active { transform: scale(0.98); }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .client-name { font-size: 18px; font-weight: 800; color: var(--text-heading); }
+        .stars { color: #f59e0b; font-size: 11px; margin-top: 4px; }
+        .card-meta { font-size: 12px; color: var(--brand); font-weight: 600; margin-bottom: 10px; display: flex; gap: 8px; }
 
-        /* ---------------------------------- */
-        /* ✨ 重点优化：高级感底部导航栏 ✨ */
-        /* ---------------------------------- */
-        .tab-bar-container {
-            position: fixed;
-            bottom: 0; width: 100%;
-            height: 90px;
-            background: transparent;
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-        }
+        .memo-preview { background: #f8fafc; padding: 12px; border-radius: 14px; font-size: 13px; color: #64748b; line-height: 1.5; border-left: 3px solid #cbd5e1; }
 
-        /* 导航背景做成“微笑曲线” */
-        .tab-bar-bg {
-            position: absolute; bottom: 0; width: 100%; height: 75px;
-            background: var(--surface);
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
-            display: flex;
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-
-        .nav-item {
-            flex: 1; display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            color: var(--text-muted); font-size: 10px; font-weight: 700; gap: 4px;
-        }
+        /* 底部导航栏 */
+        .tab-bar-container { position: fixed; bottom: 0; width: 100%; height: 85px; background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); display: flex; z-index: 1000; border-top: 1px solid rgba(0,0,0,0.05); padding-bottom: env(safe-area-inset-bottom); }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); font-size: 10px; font-weight: 700; gap: 4px; }
         .nav-item.active { color: var(--brand); }
-        .nav-item i { font-size: 20px; }
+        .nav-item i { font-size: 18px; }
+        .nav-placeholder { flex: 0.8; }
 
-        /* 占位符，用来给中间的加号腾出视觉空间 */
-        .nav-placeholder { flex: 1; }
-
-        /* 悬浮加号按钮 - 彻底解决打架问题 */
+        /* 加号按钮优化 */
         .main-fab {
-            position: absolute;
-            bottom: 35px; /* 向上悬浮 */
-            width: 65px; height: 65px;
-            background: var(--brand);
-            color: white;
-            border-radius: 22px; /* 稍微方圆，增加硬朗感 */
-            display: flex; align-items: center; justify-content: center;
-            font-size: 28px;
-            box-shadow: 0 15px 30px rgba(37, 99, 235, 0.4);
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 1001;
-            border: 5px solid var(--bg-base); /* 增加白边，增加层级感 */
+            position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%);
+            width: 56px; height: 56px; background: var(--brand); color: white;
+            border-radius: 18px; display: flex; align-items: center; justify-content: center;
+            font-size: 24px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 1001; border: 4px solid white;
         }
-        .main-fab:active { transform: scale(0.85) rotate(90deg); }
 
         /* 详情页 & 统计页 */
-        #detailPage, #dashboardView { display: none; padding: 20px; animation: fadeInUp 0.4s; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        #detailPage, #dashboardView { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* 弹窗样式 */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display: none; z-index: 2000; align-items: flex-end; }
+        /* 详情页档案感设计 */
+        .info-group { margin-bottom: 20px; }
+        .info-label { font-size: 11px; color: var(--text-muted); font-weight: 800; margin-bottom: 6px; text-transform: uppercase; }
+        .info-value { font-size: 15px; font-weight: 600; color: var(--text-heading); }
+        .detail-card { background: white; border-radius: 30px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); position: relative; }
+
+        /* 弹窗 & 表单 */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: none; z-index: 2000; align-items: flex-end; }
         .modal.show { display: flex; }
-        .modal-content { background: white; width: 100%; border-radius: 40px 40px 0 0; padding: 30px; max-height: 85vh; overflow-y: auto; }
-        .form-input { width: 100%; padding: 15px; margin-top: 10px; border: 1px solid #e2e8f0; border-radius: 14px; background: #f8fafc; box-sizing: border-box; }
-        .btn-save { width: 100%; padding: 18px; background: var(--brand-dark); color: white; border: none; border-radius: 18px; font-weight: 700; margin-top: 20px; }
+        .modal-content { background: white; width: 100%; border-radius: 32px 32px 0 0; padding: 25px; max-height: 90vh; overflow-y: auto; box-sizing: border-box; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .form-input { width: 100%; padding: 14px; margin-top: 5px; border: 1.5px solid #e2e8f0; border-radius: 14px; background: #f8fafc; box-sizing: border-box; font-size: 14px; outline: none; }
+        .form-input:focus { border-color: var(--brand); background: white; }
+        .submit-btn { width: 100%; padding: 16px; background: var(--brand-dark); color: white; border: none; border-radius: 16px; font-weight: 800; margin-top: 20px; font-size: 16px; }
     </style>
 </head>
 <body>
 
 <div id="listView">
     <div class="app-header">
-        <div style="font-size: 14px; opacity: 0.6; letter-spacing: 2px;">PRECISION DECISION</div>
+        <div style="font-size: 12px; opacity: 0.6; letter-spacing: 2px;">PRECISION DECISION</div>
         <div class="stats-count" id="totalCount">0</div>
-        <div style="font-size: 12px; opacity: 0.6;">当前掌握的核心伙伴资源</div>
+        <div style="font-size: 11px; opacity: 0.6;">当前掌握的核心伙伴资源</div>
     </div>
     <div class="search-container">
         <i class="fa-solid fa-magnifying-glass search-icon"></i>
-        <input type="text" id="searchBox" placeholder="搜寻姓名、机构或决策备忘...">
+        <input type="text" id="searchBox" placeholder="搜寻姓名、机构、备注或职务...">
     </div>
     <div id="customerList"></div>
 </div>
 
 <div id="detailPage">
-    <div onclick="showList()" style="margin-bottom: 20px; color: var(--text-muted); font-weight: 700;"><i class="fa-solid fa-chevron-left"></i> 返回列表</div>
+    <div onclick="showList()" style="padding: 10px 0; margin-bottom: 15px; color: var(--text-muted); font-weight: 800; display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-arrow-left"></i> 返回列表
+    </div>
     <div id="detailContent"></div>
 </div>
 
 <div id="dashboardView">
-    <h2 style="margin: 40px 0 20px; font-weight: 900;">决策数据漏斗</h2>
-    <div style="background:white; border-radius:35px; padding:30px; box-shadow:0 10px 30px rgba(0,0,0,0.05);">
+    <h2 style="margin: 40px 0 20px; font-weight: 900; color:var(--brand-dark)">决策分布分析</h2>
+    <div style="background:white; border-radius:30px; padding:25px; box-shadow:0 10px 30px rgba(0,0,0,0.05);">
         <canvas id="statusChart"></canvas>
     </div>
 </div>
 
+<div class="main-fab" onclick="openModal()"><i class="fa-solid fa-plus"></i></div>
+
 <div class="tab-bar-container">
-    <div class="main-fab" onclick="openModal()"><i class="fa-solid fa-plus"></i></div>
-    <div class="tab-bar-bg">
-        <div class="nav-item active" id="tabHome" onclick="showList()">
-            <i class="fa-solid fa-address-book"></i><span>伙伴</span>
-        </div>
-        <div class="nav-item" id="tabStats" onclick="showStats()">
-            <i class="fa-solid fa-chart-pie"></i><span>统计</span>
-        </div>
-        <div class="nav-placeholder"></div> <div class="nav-item">
-            <i class="fa-solid fa-calendar-check"></i><span>待办</span>
-        </div>
-        <div class="nav-item" onclick="exportData()">
-            <i class="fa-solid fa-box-archive"></i><span>备份</span>
-        </div>
+    <div class="nav-item active" id="tabHome" onclick="showList()">
+        <i class="fa-solid fa-address-book"></i><span>伙伴</span>
+    </div>
+    <div class="nav-item" id="tabStats" onclick="showStats()">
+        <i class="fa-solid fa-chart-pie"></i><span>统计</span>
+    </div>
+    <div class="nav-placeholder"></div>
+    <div class="nav-item" onclick="alert('即将上线：AI谈资助手')">
+        <i class="fa-solid fa-wand-magic-sparkles"></i><span>AI助手</span>
+    </div>
+    <div class="nav-item" onclick="exportData()">
+        <i class="fa-solid fa-cloud-arrow-down"></i><span>备份</span>
     </div>
 </div>
 
 <div class="modal" id="modal">
     <div class="modal-content">
-        <h2 id="modalTitle" style="margin-top:0">新决策档案</h2>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+            <h2 id="modalTitle" style="margin:0; font-size:20px;">建立决策档案</h2>
+            <i class="fa-solid fa-circle-xmark" onclick="closeModal()" style="font-size:24px; color:#cbd5e1;"></i>
+        </div>
+        
         <input type="hidden" id="editId">
-        <label>姓名</label><input type="text" id="name" class="form-input">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px;">
+        
+        <div class="form-grid">
+            <div><label>姓名</label><input type="text" id="name" class="form-input"></div>
+            <div><label>性别</label><select id="gender" class="form-input"><option>🚹 男</option><option>🚺 女</option></select></div>
+        </div>
+
+        <div class="form-grid">
             <div><label>级别</label><select id="level" class="form-input"><option>⭐</option><option>⭐⭐⭐</option><option>⭐⭐⭐⭐⭐</option></select></div>
             <div><label>状态</label><select id="status" class="form-input"><option>💡 初步接触</option><option>🤝 正式签约</option><option>⏸️ 暂时搁置</option></select></div>
         </div>
-        <label style="display:block; margin-top:15px;">机构/公司</label><input type="text" id="company" class="form-input">
-        <label style="display:block; margin-top:15px;">决策备忘</label><textarea id="demands" rows="4" class="form-input"></textarea>
-        <button class="btn-save" onclick="saveData()">同步至决策云端</button>
-        <button id="delBtn" onclick="deleteData()" style="width:100%; border:none; background:none; color:red; margin-top:15px; font-weight:700; display:none;">彻底抹除记录</button>
+
+        <div class="form-grid">
+            <div><label>公司/机构</label><input type="text" id="company" class="form-input"></div>
+            <div><label>职务</label><input type="text" id="position" class="form-input"></div>
+        </div>
+
+        <div class="form-grid">
+            <div><label>电话</label><input type="tel" id="phone" class="form-input"></div>
+            <div><label>微信</label><input type="text" id="wechat" class="form-input"></div>
+        </div>
+
+        <div class="form-grid">
+            <div><label>来源渠道</label><input type="text" id="source" class="form-input" placeholder="朋友介绍/地推等"></div>
+            <div><label>生日</label><input type="date" id="birthday" class="form-input"></div>
+        </div>
+
+        <label style="display:block; margin-top:15px;">决策备忘 (核心诉求/谈判重点)</label>
+        <textarea id="demands" rows="3" class="form-input"></textarea>
+
+        <button class="submit-btn" onclick="saveData()">同步至决策云端</button>
+        <button id="delBtn" onclick="deleteData()" style="width:100%; border:none; background:none; color:#ef4444; margin-top:15px; font-weight:700; display:none;">彻底抹除档案</button>
     </div>
 </div>
 
@@ -190,13 +194,26 @@
         container.innerHTML = '';
         const list = customers.filter(c => Object.values(c).some(v => String(v).toLowerCase().includes(kw)));
         document.getElementById('totalCount').innerText = list.length;
+        
         list.forEach(c => {
             const div = document.createElement('div');
             div.className = 'customer-card';
             div.onclick = () => showDetail(c.id);
-            div.innerHTML = `<div class="card-header"><span class="client-name">${c.name}</span><span>${c.level}</span></div>
-                             <div style="font-size:12px; color:var(--brand); margin-bottom:10px;">${c.company || '核心资产'} · ${c.status}</div>
-                             <div class="memo-preview">${c.demands ? c.demands.substring(0,50)+'...' : '暂无决策备忘记录'}</div>`;
+            div.innerHTML = `
+                <div class="card-header">
+                    <div>
+                        <span class="client-name">${c.name}</span>
+                        <div class="stars">${c.level}</div>
+                    </div>
+                    <span style="font-size:12px; opacity:0.5">${c.gender || ''}</span>
+                </div>
+                <div class="card-meta">
+                    <span><i class="fa-solid fa-building"></i> ${c.company || '核心伙伴'}</span>
+                    <span>·</span>
+                    <span>${c.status}</span>
+                </div>
+                <div class="memo-preview">${c.demands ? c.demands.substring(0,60)+'...' : '暂无决策备忘记录'}</div>
+            `;
             container.appendChild(div);
         });
     }
@@ -204,23 +221,46 @@
     function showDetail(id) {
         const c = customers.find(x => x.id == id);
         document.getElementById('listView').style.display = 'none';
+        document.getElementById('dashboardView').style.display = 'none';
         const detail = document.getElementById('detailPage');
         detail.style.display = 'block';
-        detail.innerHTML = `<div onclick="showList()" style="margin-bottom:20px; font-weight:700;"><i class="fa-solid fa-chevron-left"></i> 返回</div>
-            <div style="background:white; border-radius:35px; padding:30px; box-shadow:0 10px 40px rgba(0,0,0,0.05);">
-                <h1 style="margin:0">${c.name}</h1><p style="color:var(--brand)">${c.status}</p>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:20px 0;">
-                    <button style="padding:15px; border-radius:15px; border:1px solid #eee;" onclick="location.href='tel:${c.phone}'">拨打电话</button>
-                    <button style="padding:15px; border-radius:15px; border:1px solid #eee;" onclick="copyText('${c.wechat}')">复制微信</button>
+        detail.innerHTML = `
+            <div onclick="showList()" style="padding: 10px 0; margin-bottom: 15px; color: var(--text-muted); font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-arrow-left"></i> 返回列表
+            </div>
+            <div class="detail-card">
+                <div style="text-align:center; margin-bottom:25px;">
+                    <div style="font-size:28px; font-weight:900;">${c.name}</div>
+                    <div style="color:var(--brand); font-weight:700; margin-top:5px;">${c.position || '核心伙伴'} @ ${c.company || '未设机构'}</div>
                 </div>
-                <label style="font-size:11px; color:#94a3b8">决策备注</label>
-                <div style="margin-top:10px; line-height:1.7; font-size:14px; white-space:pre-wrap;">${c.demands || '无内容'}</div>
-                <button class="btn-save" onclick="editData(${c.id})">编辑档案</button>
-            </div>`;
+                
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:25px;">
+                    <button style="padding:15px; border-radius:18px; border:1.5px solid #e2e8f0; background:white; font-weight:700;" onclick="location.href='tel:${c.phone}'"><i class="fa-solid fa-phone" style="color:#10b981"></i> 拨号</button>
+                    <button style="padding:15px; border-radius:18px; border:1.5px solid #e2e8f0; background:white; font-weight:700;" onclick="copyText('${c.wechat}')"><i class="fa-brands fa-weixin" style="color:#07c160"></i> 微信</button>
+                </div>
+
+                <div class="form-grid">
+                    <div class="info-group"><div class="info-label">状态阶段</div><div class="info-value">${c.status}</div></div>
+                    <div class="info-group"><div class="info-label">重要等级</div><div class="info-value">${c.level}</div></div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="info-group"><div class="info-label">生日</div><div class="info-value">${c.birthday || '未记录'}</div></div>
+                    <div class="info-group"><div class="info-label">来源</div><div class="info-value">${c.source || '未记录'}</div></div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">决策备忘 (MEMO)</div>
+                    <div style="background:#f8fafc; padding:15px; border-radius:18px; font-size:14px; line-height:1.7; border:1px solid #edf2f7; white-space:pre-wrap;">${c.demands || '暂无内容'}</div>
+                </div>
+
+                <button class="submit-btn" onclick="editData(${c.id})">编辑档案</button>
+            </div>
+        `;
     }
 
     function showList() { document.getElementById('listView').style.display = 'block'; document.getElementById('dashboardView').style.display = 'none'; document.getElementById('detailPage').style.display = 'none'; setActiveTab('tabHome'); }
-    function showStats() { document.getElementById('listView').style.display = 'none'; document.getElementById('dashboardView').style.display = 'block'; setActiveTab('tabStats'); renderChart(); }
+    function showStats() { document.getElementById('listView').style.display = 'none'; document.getElementById('dashboardView').style.display = 'block'; document.getElementById('detailPage').style.display = 'none'; setActiveTab('tabStats'); renderChart(); }
     function setActiveTab(id) { document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 
     function renderChart() {
@@ -231,25 +271,69 @@
         myChart = new Chart(ctx, {
             type: 'doughnut',
             data: { labels: Object.keys(stats), datasets: [{ data: Object.values(stats), backgroundColor: ['#2563eb', '#f59e0b', '#10b981', '#ef4444'], borderWidth: 0 }] },
-            options: { cutout: '80%', plugins: { legend: { position: 'bottom' } } }
+            options: { cutout: '75%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { weight: '600' } } } } }
         });
     }
 
-    function openModal() { document.getElementById('editId').value = ''; document.getElementById('modalTitle').innerText = '新决策档案'; document.getElementById('delBtn').style.display = 'none'; document.querySelectorAll('#modal input, #modal textarea').forEach(i => i.value = ''); document.getElementById('modal').classList.add('show'); }
+    function openModal() {
+        document.getElementById('editId').value = '';
+        document.getElementById('modalTitle').innerText = '建立决策档案';
+        document.getElementById('delBtn').style.display = 'none';
+        document.querySelectorAll('#modal input, #modal textarea, #modal select').forEach(i => i.value = '');
+        document.getElementById('gender').value = '🚹 男';
+        document.getElementById('level').value = '⭐';
+        document.getElementById('status').value = '💡 初步接触';
+        document.getElementById('modal').classList.add('show');
+    }
     function closeModal() { document.getElementById('modal').classList.remove('show'); }
-    function editData(id) { const c = customers.find(x => x.id == id); document.getElementById('editId').value = c.id; document.getElementById('name').value = c.name; document.getElementById('level').value = c.level; document.getElementById('status').value = c.status; document.getElementById('company').value = c.company || ''; document.getElementById('demands').value = c.demands || ''; document.getElementById('modalTitle').innerText = '修正档案'; document.getElementById('delBtn').style.display = 'block'; document.getElementById('modal').classList.add('show'); }
-    
+
+    function editData(id) {
+        const c = customers.find(x => x.id == id);
+        document.getElementById('editId').value = c.id;
+        document.getElementById('name').value = c.name;
+        document.getElementById('gender').value = c.gender || '🚹 男';
+        document.getElementById('level').value = c.level;
+        document.getElementById('status').value = c.status;
+        document.getElementById('company').value = c.company || '';
+        document.getElementById('position').value = c.position || '';
+        document.getElementById('phone').value = c.phone || '';
+        document.getElementById('wechat').value = c.wechat || '';
+        document.getElementById('source').value = c.source || '';
+        document.getElementById('birthday').value = c.birthday || '';
+        document.getElementById('demands').value = c.demands || '';
+        document.getElementById('modalTitle').innerText = '修正档案';
+        document.getElementById('delBtn').style.display = 'block';
+        document.getElementById('modal').classList.add('show');
+    }
+
     async function saveData() {
-        const row = { name: document.getElementById('name').value, level: document.getElementById('level').value, status: document.getElementById('status').value, company: document.getElementById('company').value, demands: document.getElementById('demands').value };
+        const btn = document.querySelector('.submit-btn');
+        btn.innerText = "同步中..."; btn.disabled = true;
+        const row = {
+            name: document.getElementById('name').value,
+            gender: document.getElementById('gender').value,
+            level: document.getElementById('level').value,
+            status: document.getElementById('status').value,
+            company: document.getElementById('company').value,
+            position: document.getElementById('position').value,
+            phone: document.getElementById('phone').value,
+            wechat: document.getElementById('wechat').value,
+            source: document.getElementById('source').value,
+            birthday: document.getElementById('birthday').value,
+            demands: document.getElementById('demands').value
+        };
         const id = document.getElementById('editId').value;
-        if(id) await supabaseClient.from('customers').update(row).eq('id', id);
-        else await supabaseClient.from('customers').insert([row]);
-        await init(); closeModal(); showList();
+        try {
+            if(id) await supabaseClient.from('customers').update(row).eq('id', id);
+            else await supabaseClient.from('customers').insert([row]);
+            await init(); closeModal(); showList();
+        } catch (e) { alert("同步失败"); }
+        finally { btn.innerText = "同步至决策云端"; btn.disabled = false; }
     }
 
     async function deleteData() { if(confirm("抹除档案？")) { await supabaseClient.from('customers').delete().eq('id', document.getElementById('editId').value); await init(); closeModal(); showList(); } }
-    function copyText(txt) { navigator.clipboard.writeText(txt); alert("复制成功"); }
-    function exportData() { alert("数据已安全备份至本地缓存"); }
+    function copyText(txt) { if(!txt) return alert("未录入微信"); navigator.clipboard.writeText(txt); alert("复制成功"); }
+    function exportData() { const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(customers)); const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", `CRM_BACKUP.json`); dl.click(); }
     
     document.getElementById('searchBox').oninput = render;
     init();
