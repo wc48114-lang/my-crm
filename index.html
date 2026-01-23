@@ -118,7 +118,7 @@
         <input type="hidden" id="editId">
         
         <div class="input-group">
-            <label>客户编号 (系统自动分配)</label>
+            <label>序列号 (自动生成)</label>
             <input type="text" id="cust_id" class="input" readonly style="background:#eee;">
         </div>
         
@@ -142,8 +142,8 @@
             <div class="input-group"><label>微信</label><input type="text" id="wechat" class="input"></div>
         </div>
 
-        <div class="input-group"><label>电子邮箱 (新增字段)</label><input type="email" id="email" class="input" placeholder="example@mail.com"></div>
-        <div class="input-group"><label>办公地址/地区 (新增字段)</label><input type="text" id="address" class="input" placeholder="例：上海市浦东新区..."></div>
+        <div class="input-group"><label>电子邮箱</label><input type="email" id="email" class="input"></div>
+        <div class="input-group"><label>办公地址/地区</label><input type="text" id="address" class="input"></div>
 
         <div class="grid">
             <div class="input-group"><label>来源</label><input type="text" id="source" class="input"></div>
@@ -192,8 +192,8 @@
             div.onclick = () => showDetail(c.id);
             div.innerHTML = `
                 <div class="card-header">
-                    <span class="name">${c.name} ${c.gender.includes('女') ? '👩‍💼' : '👨‍💼'}</span>
-                    <span class="cust-id-tag">${c.cust_id || 'ID-REGEN'}</span>
+                    <span class="name">${c.name} ${c.gender && c.gender.includes('女') ? '👩‍💼' : '👨‍💼'}</span>
+                    <span class="cust-id-tag">${c.cust_id || 'C-NEW'}</span>
                 </div>
                 <div class="org-info"><i class="fa-solid fa-briefcase"></i> ${c.company} · ${c.job}</div>
                 ${c.address ? `<div style="font-size:11px; color:var(--primary); margin-bottom:8px;"><i class="fa-solid fa-location-dot"></i> ${c.address}</div>` : ''}
@@ -209,7 +209,7 @@
         document.getElementById('detailContainer').innerHTML = `
             <div class="detail-card">
                 <div style="text-align:center; margin-bottom:25px;">
-                    <div style="font-size:11px; color:var(--text-sub);">档案 ID: ${c.cust_id || '-'}</div>
+                    <div style="font-size:11px; color:var(--text-sub);">序列号: ${c.cust_id || '待补全'}</div>
                     <h2 style="font-size:32px; margin:5px 0;">${c.name}</h2>
                     <div style="color:var(--primary); font-weight:800;">${c.company} · ${c.job}</div>
                 </div>
@@ -239,9 +239,19 @@
         const fields = ['cust_id','name','gender','level','status','company','job','phone','wechat','email','address','source','birthday','demands'];
         if(id) {
             const c = customers.find(x => x.id == id);
-            fields.forEach(f => document.getElementById(f).value = c[f] || '');
+            fields.forEach(f => {
+                const el = document.getElementById(f);
+                if(el) el.value = c[f] || '';
+            });
+            // 如果老数据没序列号，打开编辑时也预设一个
+            if(!document.getElementById('cust_id').value) {
+                document.getElementById('cust_id').value = 'C' + Date.now().toString().slice(-6);
+            }
         } else {
             document.querySelectorAll('.input').forEach(i => i.value = '');
+            document.getElementById('gender').value = '🚹 男';
+            document.getElementById('level').value = '⭐⭐⭐⭐⭐';
+            document.getElementById('status').value = '💡 初步接触';
             document.getElementById('cust_id').value = 'C' + Date.now().toString().slice(-6);
         }
         document.getElementById('modal').style.display = 'flex';
@@ -251,7 +261,7 @@
 
     async function saveData() {
         const row = {
-            cust_id: document.getElementById('cust_id').value,
+            cust_id: document.getElementById('cust_id').value || ('C' + Date.now().toString().slice(-6)),
             name: document.getElementById('name').value,
             gender: document.getElementById('gender').value,
             level: document.getElementById('level').value,
@@ -266,10 +276,12 @@
             birthday: document.getElementById('birthday').value,
             demands: document.getElementById('demands').value
         };
+        if(!row.name) { alert("姓名不能为空"); return; }
+        
         const id = document.getElementById('editId').value;
         const { error } = id ? await supabaseClient.from('customers').update(row).eq('id', id) : await supabaseClient.from('customers').insert([row]);
         if(!error) { alert("同步成功！"); await init(); closeForm(); switchTab('list'); }
-        else { alert("同步失败，请确保后台已加列！"); }
+        else { alert("同步失败，请确保后台字段正确！"); console.error(error); }
     }
 
     function renderAI() {
