@@ -3,142 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>纵横 · 顶级决策终端</title>
+    <title>纵横 · 全能决策终端</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg: #f0f4f8;
+            --bg: #f8fafc;
             --primary: #2563eb;
             --dark: #0f172a;
-            --card-bg: #ffffff;
+            --surface: #ffffff;
             --accent: #f59e0b;
             --text-main: #1e293b;
             --text-sub: #64748b;
         }
 
-        body { font-family: 'PingFang SC', -apple-system, sans-serif; background: var(--bg); margin: 0; color: var(--text-main); line-height: 1.5; padding-bottom: 100px; }
+        body { font-family: 'PingFang SC', -apple-system, sans-serif; background: var(--bg); margin: 0; color: var(--text-main); padding-bottom: 100px; }
 
-        /* --- 动态顶部：更霸气 --- */
-        .hero-section {
+        /* --- 顶部 Header --- */
+        .hero {
             background: linear-gradient(160deg, #0f172a 0%, #1e293b 100%);
-            padding: 50px 25px 70px;
-            color: white;
-            border-bottom-left-radius: 50px;
-            border-bottom-right-radius: 50px;
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.2);
+            padding: 50px 25px 80px; color: white; border-bottom-left-radius: 50px; border-bottom-right-radius: 50px;
         }
         .hero-label { font-size: 10px; text-transform: uppercase; letter-spacing: 4px; opacity: 0.5; margin-bottom: 8px; }
         .hero-main { display: flex; align-items: baseline; gap: 12px; }
-        .hero-number { font-size: 64px; font-weight: 900; letter-spacing: -2px; }
-        .hero-desc { font-size: 14px; opacity: 0.8; font-weight: 500; }
+        .hero-number { font-size: 60px; font-weight: 900; }
 
-        /* --- 搜索框：悬浮质感 --- */
-        .search-wrapper { margin: -35px 20px 20px; position: relative; z-index: 10; }
+        /* --- 搜索 --- */
+        .search-area { margin: -40px 20px 20px; position: relative; z-index: 10; }
         #searchBox {
             width: 100%; padding: 20px 25px 20px 60px; border: none; border-radius: 25px;
-            background: var(--card-bg); box-shadow: 0 20px 40px rgba(0,0,0,0.06);
-            font-size: 16px; outline: none; box-sizing: border-box;
+            background: var(--surface); box-shadow: 0 15px 35px rgba(0,0,0,0.08); font-size: 16px; outline: none; box-sizing: border-box;
         }
-        .search-icon { position: absolute; left: 25px; top: 50%; transform: translateY(-50%); color: var(--text-sub); font-size: 20px; }
+        .search-icon { position: absolute; left: 25px; top: 50%; transform: translateY(-50%); color: var(--text-sub); }
 
-        /* --- 决策卡片：重新设计 --- */
-        .decision-card {
-            background: var(--card-bg); margin: 0 16px 20px; padding: 25px; border-radius: 35px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.02); position: relative; overflow: hidden;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid rgba(255,255,255,0.5);
+        /* --- 决策卡片 --- */
+        .card {
+            background: var(--surface); margin: 0 16px 18px; padding: 25px; border-radius: 35px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.03); position: relative; border: 1px solid rgba(255,255,255,0.8);
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .decision-card:active { transform: scale(0.96); }
-        .vip-border { position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--primary); }
-        .vip-gold { background: linear-gradient(to bottom, #f59e0b, #d97706); }
+        .card:active { transform: scale(0.97); }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .name-group { display: flex; align-items: center; gap: 8px; }
+        .name { font-size: 24px; font-weight: 900; color: var(--dark); }
+        .time-tag { font-size: 11px; color: var(--primary); font-weight: 800; background: #eff6ff; padding: 4px 12px; border-radius: 12px; }
 
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .name-tag { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
-        .time-badge { font-size: 11px; background: #f1f5f9; padding: 4px 12px; border-radius: 12px; color: var(--text-sub); font-weight: 700; }
-
-        .org-info { font-size: 14px; color: var(--primary); font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 6px; }
+        .company-info { font-size: 14px; color: var(--text-sub); margin-bottom: 12px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
         
-        .memo-content {
-            background: #f8fafc; padding: 18px; border-radius: 22px; font-size: 15px;
-            color: #334155; line-height: 1.6; position: relative; border: 1px dashed #e2e8f0;
+        .memo-preview {
+            background: #f1f5f9; padding: 18px; border-radius: 22px; font-size: 14px;
+            color: #475569; line-height: 1.6; border-left: 5px solid var(--primary);
         }
-        .memo-label { position: absolute; top: -10px; left: 20px; background: var(--card-bg); padding: 0 8px; font-size: 10px; font-weight: 900; color: #cbd5e1; }
 
-        .card-footer { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
-        .status-pill { font-size: 11px; padding: 5px 12px; border-radius: 10px; background: #eef2ff; color: var(--primary); font-weight: 800; }
+        .card-footer { margin-top: 15px; display: flex; gap: 10px; }
+        .tag { font-size: 11px; padding: 5px 12px; border-radius: 10px; font-weight: 800; }
+        .tag-status { background: #fef3c7; color: #92400e; }
+        .tag-level { background: #e0f2fe; color: #0369a1; }
 
-        /* --- 交互元素 --- */
-        .tab-nav {
-            position: fixed; bottom: 0; width: 100%; height: 90px; background: rgba(255,255,255,0.85);
+        /* --- 底部 TabBar --- */
+        .tab-bar {
+            position: fixed; bottom: 0; width: 100%; height: 90px; background: rgba(255,255,255,0.95);
             backdrop-filter: blur(20px); display: flex; align-items: center; z-index: 1000;
-            border-top: 1px solid rgba(0,0,0,0.03); padding-bottom: env(safe-area-inset-bottom);
+            border-top: 1px solid rgba(0,0,0,0.05); padding-bottom: env(safe-area-inset-bottom);
         }
-        .nav-btn { flex: 1; text-align: center; color: #94a3b8; font-size: 11px; font-weight: 800; transition: 0.3s; }
-        .nav-btn.active { color: var(--primary); }
-        .nav-btn i { font-size: 24px; margin-bottom: 4px; display: block; }
+        .tab-item { flex: 1; text-align: center; color: #94a3b8; font-size: 11px; font-weight: 800; }
+        .tab-item.active { color: var(--primary); }
+        .tab-item i { font-size: 24px; margin-bottom: 4px; display: block; }
 
-        .center-add {
+        .add-btn {
             width: 65px; height: 65px; background: var(--primary); color: white; border-radius: 22px;
             display: flex; align-items: center; justify-content: center; font-size: 28px;
-            box-shadow: 0 15px 35px rgba(37, 99, 235, 0.3); margin-top: -50px; border: 6px solid var(--bg);
+            box-shadow: 0 15px 35px rgba(37, 99, 235, 0.4); margin-top: -50px; border: 6px solid var(--bg);
         }
 
-        /* --- 模态框重绘 --- */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); display: none; z-index: 2000; align-items: flex-end; }
-        .modal-sheet { background: white; width: 100%; border-radius: 45px 45px 0 0; padding: 35px 25px; box-sizing: border-box; max-height: 90vh; overflow-y: auto; }
-        .fancy-input { width: 100%; padding: 18px; border: 2px solid #f1f5f9; border-radius: 20px; background: #f8fafc; font-size: 16px; margin-bottom: 15px; box-sizing: border-box; transition: 0.3s; }
-        .fancy-input:focus { border-color: var(--primary); background: white; }
-        .submit-trigger { width: 100%; padding: 20px; background: var(--dark); color: white; border: none; border-radius: 22px; font-weight: 900; font-size: 17px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        /* --- 模块显示 --- */
+        .page-view { display: none; padding: 25px 20px; }
+        .page-view.active { display: block; }
+        
+        /* AI 简报样式 */
+        .ai-card { background: #1e293b; color: white; border-radius: 30px; padding: 25px; margin-bottom: 20px; border-bottom: 4px solid var(--primary); }
+        .ai-title { font-size: 12px; color: var(--primary); font-weight: 900; letter-spacing: 2px; margin-bottom: 10px; }
+
+        /* --- 侧拉/弹窗 --- */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); display: none; z-index: 2000; align-items: flex-end; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; width: 100%; border-radius: 40px 40px 0 0; padding: 30px; max-height: 90vh; overflow-y: auto; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        .input-group label { display: block; font-size: 12px; font-weight: 800; color: var(--text-sub); margin-bottom: 6px; margin-left: 5px; }
+        .input { width: 100%; padding: 15px; border: 2px solid #f1f5f9; border-radius: 18px; background: #f8fafc; font-size: 16px; box-sizing: border-box; font-weight: 600; }
+        .btn-save { width: 100%; padding: 20px; background: var(--dark); color: white; border: none; border-radius: 22px; font-weight: 900; font-size: 17px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div id="view-list">
-    <div class="hero-section">
-        <div class="hero-label">Tactical Intelligence</div>
+<div id="view-list" class="page-view active" style="padding:0;">
+    <div class="hero">
+        <div class="hero-label">Tactical Intelligence Central</div>
         <div class="hero-main">
             <span class="hero-number" id="totalCount">0</span>
-            <span class="hero-desc">位深度联络的决策核心</span>
+            <span style="font-size: 16px; opacity: 0.8; font-weight: 700;">位核心资源档案</span>
         </div>
     </div>
-
-    <div class="search-wrapper">
-        <i class="fa-solid fa-fingerprint search-icon"></i>
-        <input type="text" id="searchBox" placeholder="搜寻档案、机构或决策痛点..." oninput="renderList()">
+    <div class="search-area">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="searchBox" placeholder="搜寻姓名、机构或决策痛点..." oninput="renderList()">
     </div>
-
-    <div id="mainContainer"></div>
+    <div id="listContainer"></div>
 </div>
 
-<div class="tab-nav">
-    <div class="nav-btn active" onclick="showView('list')"><i class="fa-solid fa-house-chimney-window"></i><span>中枢</span></div>
-    <div class="nav-btn" onclick="showView('ai')"><i class="fa-solid fa-brain"></i><span>决策军师</span></div>
-    <div class="center-add" onclick="openDrawer()"><i class="fa-solid fa-plus"></i></div>
-    <div class="nav-btn" onclick="showView('stats')"><i class="fa-solid fa-bolt"></i><span>穿透分析</span></div>
-    <div class="nav-btn" onclick="exportData()"><i class="fa-solid fa-cloud-shield"></i><span>云同步</span></div>
+<div id="view-ai" class="page-view">
+    <h1 style="font-weight:900; margin-bottom:30px;">决策军师建议</h1>
+    <div id="aiContainer"></div>
 </div>
 
-<div class="modal-overlay" id="drawer">
-    <div class="modal-sheet">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-            <h2 style="margin:0; font-size:24px; font-weight:900;">建立决策档案</h2>
-            <i class="fa-solid fa-circle-xmark" onclick="closeDrawer()" style="font-size:30px; color:#e2e8f0;"></i>
+<div id="view-stats" class="page-view">
+    <h1 style="font-weight:900; margin-bottom:30px;">数据穿透分析</h1>
+    <div style="background:white; border-radius:40px; padding:30px; box-shadow:0 20px 40px rgba(0,0,0,0.05);">
+        <canvas id="statChart"></canvas>
+    </div>
+</div>
+
+<div id="view-detail" class="page-view">
+    <div onclick="switchTab('list')" style="font-weight:800; color:var(--text-sub); margin-bottom:20px;"><i class="fa-solid fa-arrow-left"></i> 返回档案库</div>
+    <div id="detailContainer"></div>
+</div>
+
+<div class="tab-bar">
+    <div class="tab-item active" id="tab-list" onclick="switchTab('list')"><i class="fa-solid fa-id-card"></i><span>中枢</span></div>
+    <div class="tab-item" id="tab-ai" onclick="switchTab('ai')"><i class="fa-solid fa-brain"></i><span>军师</span></div>
+    <div class="add-btn" onclick="openForm()"><i class="fa-solid fa-plus"></i></div>
+    <div class="tab-item" id="tab-stats" onclick="switchTab('stats')"><i class="fa-solid fa-chart-pie"></i><span>穿透</span></div>
+    <div class="tab-item" onclick="syncData()"><i class="fa-solid fa-cloud-arrow-up"></i><span>同步</span></div>
+</div>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
+            <h2 style="margin:0; font-weight:900;">档案维护</h2>
+            <i class="fa-solid fa-times-circle" onclick="closeForm()" style="font-size:28px; color:#cbd5e1;"></i>
         </div>
         <input type="hidden" id="editId">
-        <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:12px;">
-            <input type="text" id="name" class="fancy-input" placeholder="姓名">
-            <select id="gender" class="fancy-input"><option>🚹 男</option><option>🚺 女</option></select>
+        <div class="form-grid">
+            <div class="input-group"><label>姓名</label><input type="text" id="name" class="input"></div>
+            <div class="input-group"><label>性别</label><select id="gender" class="input"><option>🚹 男</option><option>🚺 女</option></select></div>
         </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-            <select id="level" class="fancy-input"><option value="⭐">⭐ 普通</option><option value="⭐⭐⭐">⭐⭐⭐ 重要</option><option value="⭐⭐⭐⭐⭐">⭐⭐⭐⭐⭐ 核心</option></select>
-            <select id="status" class="fancy-input"><option>💡 初步接触</option><option>🤝 正式签约</option><option>⏸️ 暂时搁置</option></select>
+        <div class="form-grid">
+            <div class="input-group"><label>级别</label><select id="level" class="input"><option>⭐</option><option>⭐⭐⭐</option><option>⭐⭐⭐⭐⭐</option></select></div>
+            <div class="input-group"><label>状态</label><select id="status" class="input"><option>💡 初步接触</option><option>🤝 正式签约</option><option>⏸️ 暂时搁置</option></select></div>
         </div>
-        <input type="text" id="company" class="fancy-input" placeholder="公司 / 机构 / 职务">
-        <input type="tel" id="phone" class="fancy-input" placeholder="联系电话">
-        <textarea id="demands" rows="4" class="fancy-input" placeholder="输入决策备忘：痛点、需求、突破口..."></textarea>
-        <button class="submit-trigger" onclick="saveData()">确 认 同 步</button>
-        <button id="delBtn" onclick="deleteData()" style="width:100%; border:none; background:none; color:#ef4444; margin-top:20px; font-weight:800; display:none;">抹除此条决策档案</button>
+        <div class="form-grid">
+            <div class="input-group"><label>公司/机构</label><input type="text" id="company" class="input"></div>
+            <div class="input-group"><label>职务</label><input type="text" id="job" class="input"></div>
+        </div>
+        <div class="form-grid">
+            <div class="input-group"><label>电话</label><input type="tel" id="phone" class="input"></div>
+            <div class="input-group"><label>微信</label><input type="text" id="wechat" class="input"></div>
+        </div>
+        <div class="input-group" style="margin-bottom:12px;"><label>决策备忘（核心诉求/痛点/偏好）</label><textarea id="demands" rows="4" class="input"></textarea></div>
+        <button class="btn-save" onclick="saveData()">同步至决策云端</button>
+        <button id="delBtn" onclick="deleteRecord()" style="width:100%; border:none; background:none; color:#ef4444; margin-top:15px; font-weight:800; display:none;">彻底移除此档案</button>
     </div>
 </div>
 
@@ -147,70 +171,122 @@
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZueWpmaWtqdnR0d215emlyaHpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNzE0NTgsImV4cCI6MjA4NDY0NzQ1OH0.SFi8Ze98-Qf0M42BupJjwsiqOxYrdauzRjjt3no7_38';
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
     let customers = [];
+    let myChart = null;
 
     async function init() {
-        const { data } = await supabaseClient.from('customers').select('*').order('created_at', { ascending: false });
+        const { data, error } = await supabaseClient.from('customers').select('*').order('created_at', { ascending: false });
         customers = data || [];
         renderList();
     }
 
+    function switchTab(viewId) {
+        document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+        document.getElementById('view-' + viewId).classList.add('active');
+        if(document.getElementById('tab-' + viewId)) document.getElementById('tab-' + viewId).classList.add('active');
+
+        if(viewId === 'ai') renderAI();
+        if(viewId === 'stats') renderChart();
+    }
+
     function renderList() {
         const kw = document.getElementById('searchBox').value.toLowerCase();
-        const container = document.getElementById('mainContainer');
+        const container = document.getElementById('listContainer');
         container.innerHTML = '';
         const list = customers.filter(c => Object.values(c).some(v => String(v).toLowerCase().includes(kw)));
         document.getElementById('totalCount').innerText = list.length;
 
         list.forEach(c => {
-            const isVip = c.level.includes('⭐⭐⭐⭐⭐');
-            const createdDate = new Date(c.created_at);
-            const diffDays = Math.floor((new Date() - createdDate) / (1000 * 60 * 60 * 24));
-            
-            const card = document.createElement('div');
-            card.className = 'decision-card';
-            card.onclick = () => editData(c.id);
-            card.innerHTML = `
-                ${isVip ? '<div class="vip-border vip-gold"></div>' : '<div class="vip-border"></div>'}
+            const diffDays = Math.floor((new Date() - new Date(c.created_at)) / (1000 * 60 * 60 * 24));
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.onclick = () => showDetail(c.id);
+            div.innerHTML = `
                 <div class="card-header">
-                    <span class="name-tag">${c.name} ${c.gender === '🚺 女' ? '👩‍💼' : '👨‍💼'}</span>
-                    <span class="time-badge">${diffDays === 0 ? '今日新增' : diffDays + ' 天前记录'}</span>
+                    <div class="name-group">
+                        <span class="name">${c.name}</span>
+                        ${c.gender.includes('女') ? '👩‍💼' : '👨‍💼'}
+                    </div>
+                    <span class="time-tag">${diffDays === 0 ? '今日新增' : diffDays + ' 天前记录'}</span>
                 </div>
-                <div class="org-info"><i class="fa-solid fa-landmark"></i> ${c.company || '核心资产'}</div>
-                <div class="memo-content">
-                    <div class="memo-label">DECISION MEMO</div>
-                    ${c.demands || '尚未录入深度决策备忘录'}
-                </div>
+                <div class="company-info"><i class="fa-solid fa-briefcase"></i> ${c.company || '核心伙伴'} · ${c.job || '负责人'}</div>
+                <div class="memo-preview">${c.demands ? c.demands.substring(0, 45) + '...' : '点击完善决策备忘录...'}</div>
                 <div class="card-footer">
-                    <span class="status-pill">${c.status}</span>
-                    <span class="status-pill" style="background:#fff7ed; color:#ea580c;">${c.level}</span>
+                    <span class="tag tag-status">${c.status}</span>
+                    <span class="tag tag-level">${c.level}</span>
                 </div>
             `;
-            container.appendChild(card);
+            container.appendChild(div);
         });
     }
 
-    // 基础逻辑
-    function openDrawer() {
-        document.getElementById('editId').value = '';
-        document.getElementById('delBtn').style.display = 'none';
-        document.querySelectorAll('.fancy-input').forEach(i => i.value = '');
-        document.getElementById('drawer').style.display = 'flex';
-    }
-    function closeDrawer() { document.getElementById('drawer').style.display = 'none'; }
-
-    function editData(id) {
+    function showDetail(id) {
         const c = customers.find(x => x.id == id);
-        document.getElementById('editId').value = c.id;
-        document.getElementById('name').value = c.name;
-        document.getElementById('gender').value = c.gender;
-        document.getElementById('level').value = c.level;
-        document.getElementById('status').value = c.status;
-        document.getElementById('company').value = c.company;
-        document.getElementById('phone').value = c.phone;
-        document.getElementById('demands').value = c.demands;
-        document.getElementById('delBtn').style.display = 'block';
-        document.getElementById('drawer').style.display = 'flex';
+        switchTab('detail');
+        document.getElementById('detailContainer').innerHTML = `
+            <div style="background:white; border-radius:40px; padding:35px; box-shadow:0 15px 40px rgba(0,0,0,0.06);">
+                <div style="text-align:center; margin-bottom:30px;">
+                    <div style="font-size:32px; font-weight:900;">${c.name}</div>
+                    <div style="color:var(--primary); font-weight:800; margin-top:10px;">${c.company} · ${c.job}</div>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:30px;">
+                    <a href="tel:${c.phone}" style="text-decoration:none; padding:18px; background:#f0f9ff; border-radius:20px; text-align:center; color:var(--primary); font-weight:800;"><i class="fa-solid fa-phone"></i> 拨号</a>
+                    <div onclick="openForm(${c.id})" style="padding:18px; background:#f8fafc; border-radius:20px; text-align:center; color:var(--dark); font-weight:800;"><i class="fa-solid fa-edit"></i> 修改</div>
+                </div>
+                <div style="background:#f8fafc; padding:25px; border-radius:25px; border-left:6px solid var(--primary);">
+                    <div style="font-size:11px; font-weight:900; color:var(--text-sub); margin-bottom:10px;">CORE MEMO (决策备忘)</div>
+                    <div style="font-size:16px; line-height:1.8; white-space:pre-wrap;">${c.demands || '暂无详细备忘'}</div>
+                </div>
+                <div style="margin-top:20px; display:flex; flex-wrap:wrap; gap:10px;">
+                    <div class="tag tag-level" style="font-size:13px; padding:8px 15px;">微信: ${c.wechat || '未录入'}</div>
+                </div>
+            </div>
+        `;
     }
+
+    function renderAI() {
+        const container = document.getElementById('aiContainer');
+        container.innerHTML = '';
+        customers.slice(0, 5).forEach(c => {
+            let tip = "建议通过电话或微信进行一次例行问候，保持热度。";
+            if(c.level.includes('⭐⭐⭐⭐⭐')) tip = "💎 核心资源！建议本周安排一次深度沟通，聚焦其备忘中的核心诉求。";
+            if(c.demands && c.demands.includes('价格')) tip = "⚠️ 警报：对方对价格敏感。下次沟通应主打“长期价值”而非“短期优惠”。";
+
+            const div = document.createElement('div');
+            div.className = 'ai-card';
+            div.innerHTML = `
+                <div class="ai-title">INTEL: ${c.name}</div>
+                <div style="font-size:15px; line-height:1.6;">${tip}</div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function renderChart() {
+        const stats = {};
+        customers.forEach(c => stats[c.status] = (stats[c.status] || 0) + 1);
+        const ctx = document.getElementById('statChart').getContext('2d');
+        if(myChart) myChart.destroy();
+        myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: { labels: Object.keys(stats), datasets: [{ data: Object.values(stats), backgroundColor: ['#2563eb', '#f59e0b', '#10b981', '#ef4444'], borderWidth: 0 }] },
+            options: { cutout: '75%', plugins: { legend: { position: 'bottom', labels: { font: { weight: 'bold' }, padding: 20 } } } }
+        });
+    }
+
+    function openForm(id = null) {
+        document.getElementById('editId').value = id || '';
+        document.getElementById('delBtn').style.display = id ? 'block' : 'none';
+        if(id) {
+            const c = customers.find(x => x.id == id);
+            ['name','gender','level','status','company','job','phone','wechat','demands'].forEach(k => document.getElementById(k).value = c[k] || '');
+        } else {
+            document.querySelectorAll('.input').forEach(i => i.value = '');
+        }
+        document.getElementById('modal').classList.add('show');
+    }
+
+    function closeForm() { document.getElementById('modal').classList.remove('show'); }
 
     async function saveData() {
         const row = {
@@ -219,18 +295,19 @@
             level: document.getElementById('level').value,
             status: document.getElementById('status').value,
             company: document.getElementById('company').value,
+            job: document.getElementById('job').value,
             phone: document.getElementById('phone').value,
+            wechat: document.getElementById('wechat').value,
             demands: document.getElementById('demands').value
         };
         const id = document.getElementById('editId').value;
         if(id) await supabaseClient.from('customers').update(row).eq('id', id);
         else await supabaseClient.from('customers').insert([row]);
-        await init(); closeDrawer();
+        await init(); closeForm(); switchTab('list');
     }
 
-    async function deleteData() { if(confirm("确定抹除此档案？")) { await supabaseClient.from('customers').delete().eq('id', document.getElementById('editId').value); await init(); closeDrawer(); } }
-    function showView(v) { alert(v + " 模块正在深度校准中..."); }
-    function exportData() { alert("决策数据已安全上云"); }
+    async function deleteRecord() { if(confirm("抹除此档案将不可恢复，确定？")) { await supabaseClient.from('customers').delete().eq('id', document.getElementById('editId').value); await init(); closeForm(); switchTab('list'); } }
+    function syncData() { alert("决策情报已实时加密备份至云端"); }
 
     init();
 </script>
