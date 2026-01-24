@@ -5,212 +5,182 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>纵横 · 决策全能终端</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { 
             --primary: #00d2ff;
-            --glass-surface: rgba(255, 255, 255, 0.08); 
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --text-main: #ffffff;
-            --text-sub: rgba(255, 255, 255, 0.6);
+            --glass: rgba(255, 255, 255, 0.08); 
+            --border: rgba(255, 255, 255, 0.12);
         }
 
-        /* 1. 全屏流动背景 */
         body { 
-            font-family: 'PingFang SC', sans-serif; margin: 0; color: var(--text-main); padding-bottom: 110px;
-            min-height: 100vh;
-            background: linear-gradient(125deg, #0f0c29, #302b63, #24243e, #004e92, #00d2ff);
-            background-size: 400% 400%; 
-            animation: bodyGradient 15s ease infinite;
-            overflow-x: hidden;
-        }
-        @keyframes bodyGradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-
-        /* 2. 炫光浮动小球（核心特效） */
-        .glow-sphere {
-            position: absolute; top: -50px; right: -30px;
-            width: 250px; height: 250px;
-            background: radial-gradient(circle, rgba(0,210,255,0.4) 0%, rgba(121,40,202,0.2) 40%, transparent 70%);
-            filter: blur(40px);
-            z-index: 1; /* 确保在背景之上，内容之下 */
-            animation: floatBall 8s ease-in-out infinite;
-            pointer-events: none;
-        }
-        @keyframes floatBall {
-            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
-            50% { transform: translate(-30px, 40px) scale(1.1); opacity: 0.9; }
+            font-family: 'PingFang SC', sans-serif; margin: 0; color: #fff; padding-bottom: 110px;
+            min-height: 100vh; background: #0f0c29; overflow-x: hidden;
         }
 
-        /* 布局 */
-        .hero { padding: 60px 25px 80px; position: relative; display: flex; justify-content: space-between; align-items: flex-end; z-index: 2; }
-        .hero-num { font-size: 75px; font-weight: 900; line-height: 1; text-shadow: 0 10px 25px rgba(0,0,0,0.4); }
-        
-        .hero-right { 
-            background: rgba(255,255,255,0.12); padding: 12px 18px; border-radius: 22px;
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border); box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        /* 炫光球：放在背景层，通过动画浮动 */
+        .bg-glow {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(125deg, #0f0c29, #302b63, #24243e);
+            z-index: -2;
         }
-        .hero-right span { display: block; font-size: 9px; font-weight: 800; letter-spacing: 1px; color: var(--primary); }
-        .hero-right b { font-size: 16px; letter-spacing: 1px; }
+        .sphere {
+            position: fixed; top: 10%; right: -10%; width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(0,210,255,0.3) 0%, rgba(121,40,202,0.2) 50%, transparent 70%);
+            filter: blur(50px); z-index: -1; animation: float 10s ease-in-out infinite;
+        }
+        @keyframes float { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-40px, 50px) scale(1.2); } }
 
-        /* 搜索框毛玻璃 */
-        .search-area { margin: -40px 20px 20px; position: relative; z-index: 10; }
+        /* Hero 区域 */
+        .hero { padding: 60px 25px 40px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .hero-num { font-size: 80px; font-weight: 900; line-height: 0.9; }
+        .status-tag { 
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 12px 20px; border-radius: 20px; border: 1px solid var(--border); text-align: right;
+        }
+
+        /* 搜索框 */
+        .search-area { padding: 0 20px 25px; }
         #searchBox { 
-            width: 100%; padding: 18px 25px 18px 60px; border-radius: 22px; 
-            background: rgba(255,255,255,0.15); backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border); color: white; outline: none; box-sizing: border-box; 
+            width: 100%; padding: 18px 25px; border-radius: 20px; border: 1px solid var(--border);
+            background: rgba(255,255,255,0.1); color: #fff; backdrop-filter: blur(20px); outline: none; box-sizing: border-box;
         }
 
-        /* 内容卡片 */
+        /* 卡片设计：恢复所有内容显示 */
         .card { 
-            background: var(--glass-surface); backdrop-filter: blur(30px);
-            margin: 0 16px 15px; padding: 22px; border-radius: 32px; border: 1px solid var(--glass-border);
+            background: var(--glass); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            margin: 0 16px 15px; padding: 25px; border-radius: 30px; border: 1px solid var(--border);
         }
-        .name { font-size: 24px; font-weight: 900; }
-        .memo-box { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 20px; font-size: 13px; border-left: 4px solid var(--primary); margin-top: 10px; }
-
-        /* 详情页 & 弹窗 */
-        .page-view { display: none; }
-        .page-view.active { display: block; }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); display: none; z-index: 2000; align-items: flex-end; }
-        .modal-content { 
-            background: rgba(30, 30, 50, 0.95); width: 100%; border-radius: 40px 40px 0 0; padding: 30px; box-sizing: border-box; color: white;
-        }
-        .input { width: 100%; padding: 14px; border: 1px solid var(--glass-border); border-radius: 15px; background: rgba(255,255,255,0.05); color: white; margin-top: 5px; box-sizing: border-box; }
+        .card-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .name { font-size: 26px; font-weight: 900; }
+        .tag { font-size: 10px; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 6px; color: rgba(255,255,255,0.5); }
+        .memo { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 18px; font-size: 14px; border-left: 4px solid var(--primary); margin: 15px 0; }
         
-        .tab-bar { position: fixed; bottom: 0; width: 100%; height: 90px; background: rgba(15, 12, 41, 0.8); backdrop-filter: blur(30px); display: flex; align-items: center; z-index: 1000; border-top: 1px solid var(--glass-border); }
+        /* 详情展示格 */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px; }
+        .info-item label { display: block; color: rgba(255,255,255,0.4); margin-bottom: 2px; }
+        .info-item span { color: #fff; font-weight: 500; }
+
+        /* 底部导航 */
+        .tab-bar { 
+            position: fixed; bottom: 0; width: 100%; height: 90px; background: rgba(15,12,41,0.8);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); display: flex; align-items: center; border-top: 1px solid var(--border);
+        }
         .tab-item { flex: 1; text-align: center; color: rgba(255,255,255,0.4); font-size: 11px; }
         .tab-item.active { color: var(--primary); }
-        .add-btn { width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-top: -40px; box-shadow: 0 10px 20px rgba(0, 210, 255, 0.4); }
+        .add-btn { width: 60px; height: 60px; background: var(--primary); color: #fff; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 26px; margin-top: -40px; box-shadow: 0 10px 20px rgba(0,210,255,0.4); }
+
+        /* 页面切换 */
+        .page { display: none; }
+        .page.active { display: block; }
     </style>
 </head>
 <body>
 
-<div class="glow-sphere"></div>
+<div class="bg-glow"></div>
+<div class="sphere"></div>
 
-<div id="view-list" class="page-view active">
+<div id="list-page" class="page active">
     <div class="hero">
-        <div class="hero-left">
-            <div style="opacity:0.6; font-size:10px; letter-spacing:3px; font-weight:800;">SYSTEM ONLINE</div>
-            <div class="hero-num" id="totalCount">0</div>
-            <div style="font-weight:700; opacity:0.9;">核心决策资产已入库</div>
+        <div>
+            <div style="font-size:10px; letter-spacing:3px; opacity:0.5; font-weight:800;">COMMAND CENTER</div>
+            <div class="hero-num" id="count">0</div>
+            <div style="font-size:14px; opacity:0.8; font-weight:700;">核心决策资源已就绪</div>
         </div>
-        <div class="hero-right">
-            <span>CORE STATUS</span>
-            <b>RUNNING</b>
+        <div class="status-tag">
+            <div style="font-size:9px; color:var(--primary); font-weight:800; letter-spacing:1px;">CORE STATUS</div>
+            <div style="font-size:18px; font-weight:900;">RUNNING</div>
         </div>
     </div>
+    
     <div class="search-area">
-        <i class="fa-solid fa-search" style="position:absolute; left:25px; top:50%; transform:translateY(-50%); color:var(--primary);"></i>
-        <input type="text" id="searchBox" placeholder="搜寻姓名、ID、备注..." oninput="renderList()">
+        <input type="text" id="searchBox" placeholder="搜寻姓名、ID、备注..." oninput="render()">
     </div>
-    <div id="listContainer"></div>
+    <div id="container"></div>
 </div>
 
-<div id="view-detail" class="page-view" style="padding:20px;">
-    <div onclick="switchTab('list')" style="font-weight:800; color:var(--text-sub); margin-bottom:20px;"><i class="fa-solid fa-arrow-left"></i> 返回档案库</div>
-    <div id="detailContainer"></div>
+<div id="detail-page" class="page" style="padding:20px;">
+    <div onclick="showPage('list-page')" style="margin-bottom:20px; opacity:0.6;"><i class="fa-solid fa-arrow-left"></i> 返回</div>
+    <div id="detail-content"></div>
 </div>
 
 <div class="tab-bar">
-    <div class="tab-item active" onclick="switchTab('list')"><i class="fa-solid fa-layer-group" style="display:block; font-size:22px;"></i>中枢</div>
-    <div class="tab-item"><i class="fa-solid fa-brain" style="display:block; font-size:22px;"></i>军师</div>
-    <div class="add-btn" onclick="openForm()"><i class="fa-solid fa-plus"></i></div>
-    <div class="tab-item"><i class="fa-solid fa-chart-pie" style="display:block; font-size:22px;"></i>穿透</div>
-    <div class="tab-item" onclick="syncData()"><i class="fa-solid fa-cloud-arrow-up" style="display:block; font-size:22px;"></i>同步</div>
-</div>
-
-<div class="modal" id="modal">
-    <div class="modal-content">
-        <h2 style="margin:0 0 20px;">档案维护</h2>
-        <input type="hidden" id="editId">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <div><label style="font-size:10px; opacity:0.6;">姓名</label><input type="text" id="name" class="input"></div>
-            <div><label style="font-size:10px; opacity:0.6;">职务</label><input type="text" id="job" class="input"></div>
-        </div>
-        <div style="margin-top:10px;"><label style="font-size:10px; opacity:0.6;">公司</label><input type="text" id="company" class="input"></div>
-        <div style="margin-top:10px;"><label style="font-size:10px; opacity:0.6;">电话</label><input type="text" id="phone" class="input"></div>
-        <div style="margin-top:10px;"><label style="font-size:10px; opacity:0.6;">核心决策备忘</label><textarea id="demands" rows="3" class="input"></textarea></div>
-        <button onclick="saveData()" style="width:100%; padding:18px; background:var(--primary); color:white; border:none; border-radius:18px; font-weight:900; margin-top:20px;">确认同步</button>
-        <button onclick="closeForm()" style="width:100%; padding:10px; background:none; border:none; color:var(--text-sub);">取消</button>
-    </div>
+    <div class="tab-item active" onclick="showPage('list-page')"><i class="fa-solid fa-layer-group" style="display:block; font-size:22px; margin-bottom:4px;"></i>中枢</div>
+    <div class="tab-item"><i class="fa-solid fa-brain" style="display:block; font-size:22px; margin-bottom:4px;"></i>军师</div>
+    <div class="add-btn"><i class="fa-solid fa-plus"></i></div>
+    <div class="tab-item"><i class="fa-solid fa-chart-pie" style="display:block; font-size:22px; margin-bottom:4px;"></i>穿透</div>
+    <div class="tab-item" onclick="init()"><i class="fa-solid fa-cloud-arrow-up" style="display:block; font-size:22px; margin-bottom:4px;"></i>同步</div>
 </div>
 
 <script>
     const SB_URL = 'https://vnyjfikjvttwmyzirhzn.supabase.co';
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZueWpmaWtqdnR0d215emlyaHpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNzE0NTgsImV4cCI6MjA4NDY0NzQ1OH0.SFi8Ze98-Qf0M42BupJjwsiqOxYrdauzRjjt3no7_38';
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
-    let customers = [];
+    let dataList = [];
 
     async function init() {
         const { data } = await supabaseClient.from('customers').select('*').order('created_at', { ascending: false });
-        customers = data || [];
-        renderList();
+        dataList = data || [];
+        render();
     }
 
-    function switchTab(view) {
-        document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
-        document.getElementById('view-' + view).classList.add('active');
-        window.scrollTo(0,0);
+    function showPage(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
     }
 
-    function renderList() {
+    function render() {
         const kw = document.getElementById('searchBox').value.toLowerCase();
-        const container = document.getElementById('listContainer');
+        const container = document.getElementById('container');
         container.innerHTML = '';
-        const list = customers.filter(c => String(c.name).toLowerCase().includes(kw) || String(c.company).toLowerCase().includes(kw));
-        document.getElementById('totalCount').innerText = list.length;
-        list.forEach(c => {
-            const div = document.createElement('div');
-            div.className = 'card';
-            div.onclick = () => showDetail(c.id);
-            div.innerHTML = `
-                <div class="card-header"><span class="name">${c.name}</span><span style="font-size:10px; opacity:0.5;">${c.cust_id || 'a1'}</span></div>
-                <div style="font-size:13px; color:var(--text-sub);">${c.company || ''} · ${c.job || ''}</div>
-                <div class="memo-box">${c.demands || '点击完善...'}</div>
+        const filtered = dataList.filter(i => String(i.name).toLowerCase().includes(kw) || String(i.demands).toLowerCase().includes(kw));
+        document.getElementById('count').innerText = filtered.length;
+
+        filtered.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.onclick = () => showDetail(item);
+            card.innerHTML = `
+                <div class="card-header">
+                    <span class="name">${item.name}</span>
+                    <span class="tag">${item.cust_id || 'a1'}</span>
+                </div>
+                <div style="font-size:13px; opacity:0.6;">${item.company || '纵横企业'} · ${item.job || '销售'}</div>
+                <div class="memo">${item.demands || '点击查看详情...'}</div>
+                <div class="info-grid">
+                    <div class="info-item"><label>微信</label><span>${item.wechat || '-'}</span></div>
+                    <div class="info-item"><label>地区</label><span>${item.address || '未知'}</span></div>
+                </div>
             `;
-            container.appendChild(div);
+            container.appendChild(card);
         });
     }
 
-    function showDetail(id) {
-        const c = customers.find(x => x.id == id);
-        switchTab('detail');
-        document.getElementById('detailContainer').innerHTML = `
-            <div class="card" style="margin:0; padding:30px; text-align:center;">
-                <h2 style="font-size:35px; margin:0;">${c.name}</h2>
-                <p style="color:var(--primary); font-weight:800;">${c.company} · ${c.job}</p>
-                <div class="memo-box" style="text-align:left; background:rgba(255,255,255,0.05);">${c.demands || '无内容'}</div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
-                    <a href="tel:${c.phone}" style="padding:15px; background:var(--primary); color:white; border-radius:15px; text-decoration:none; font-weight:800;">拨号</a>
-                    <button onclick="openForm(${c.id})" style="padding:15px; background:rgba(255,255,255,0.1); color:white; border:none; border-radius:15px;">编辑</button>
+    function showDetail(item) {
+        showPage('detail-page');
+        document.getElementById('detail-content').innerHTML = `
+            <div class="card" style="margin:0;">
+                <div style="text-align:center; margin-bottom:20px;">
+                    <div class="name" style="font-size:35px;">${item.name}</div>
+                    <div style="color:var(--primary); font-weight:bold;">${item.company} · ${item.job}</div>
+                </div>
+                <div class="memo" style="background:rgba(255,255,255,0.05);">${item.demands || '暂无内容'}</div>
+                <div class="info-grid" style="gap:20px;">
+                    <div class="info-item"><label>微信</label><span>${item.wechat || '-'}</span></div>
+                    <div class="info-item"><label>邮箱</label><span>${item.email || '-'}</span></div>
+                    <div class="info-item"><label>地区</label><span>${item.address || '-'}</span></div>
+                    <div class="info-item"><label>生日</label><span>${item.birthday || '-'}</span></div>
+                    <div class="info-item"><label>级别</label><span>${'⭐'.repeat(item.level || 5)}</span></div>
+                    <div class="info-item"><label>来源</label><span>${item.source || '-'}</span></div>
+                </div>
+                <div style="margin-top:30px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <a href="tel:${item.phone}" style="text-align:center; padding:15px; background:var(--primary); border-radius:15px; color:#fff; text-decoration:none; font-weight:bold;">拨号</a>
+                    <button style="padding:15px; background:rgba(255,255,255,0.1); border:none; border-radius:15px; color:#fff; font-weight:bold;">编辑</button>
                 </div>
             </div>
         `;
     }
 
-    function openForm(id = null) {
-        document.getElementById('editId').value = id || '';
-        if(id) {
-            const c = customers.find(x => x.id == id);
-            ['name','job','company','phone','demands'].forEach(f => document.getElementById(f).value = c[f] || '');
-        } else {
-            ['name','job','company','phone','demands'].forEach(f => document.getElementById(f).value = '');
-        }
-        document.getElementById('modal').style.display = 'flex';
-    }
-
-    function closeForm() { document.getElementById('modal').style.display = 'none'; }
-
-    async function saveData() {
-        const id = document.getElementById('editId').value;
-        const row = { name: document.getElementById('name').value, job: document.getElementById('job').value, company: document.getElementById('company').value, phone: document.getElementById('phone').value, demands: document.getElementById('demands').value };
-        const { error } = id ? await supabaseClient.from('customers').update(row).eq('id', id) : await supabaseClient.from('customers').insert([row]);
-        if(!error) { init(); closeForm(); switchTab('list'); }
-    }
-
-    function syncData() { init(); alert("同步成功"); }
     init();
 </script>
 </body>
